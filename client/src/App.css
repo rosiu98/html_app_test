@@ -1,0 +1,159 @@
+@import url("https://fonts.googleapis.com/css2?family=Lilita+One&family=Roboto:wght@300;400;500;700&display=swap");
+
+*,
+*::after,
+*::before {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto";
+  min-height: 100vh;
+}
+
+
+.center-box {
+  width: 500px;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 30%);
+}
+
+
+
+.center-box label {
+  padding: 10px 0;
+}
+
+.center-box form {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  -webkit-box-shadow: 18px 22px 49px -32px rgba(66, 68, 90, 0.32);
+-moz-box-shadow: 18px 22px 49px -32px rgba(66, 68, 90, 0.32);
+box-shadow: 18px 22px 49px -32px rgba(66, 68, 90, 0.32);
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+}
+
+select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+}
+
+.button {
+  margin-top: 15px;
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.button-loading {
+  display: flex;
+  align-items: center;
+  min-height: 75px;
+}
+
+.button-loading button {
+  margin-top: 0;
+}
+
+textarea {
+  min-height: 200px;
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+}
+
+
+.grid-box {
+  display: grid;
+  grid-template-columns: 0.2fr 0.8fr;
+}
+
+.overlay {
+  height: 0;
+}
+
+.overlay.blur {
+  position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    z-index: 90;
+}
+
+/* .frame {
+  display: block;
+  position: relative;
+  z-index: 99999;
+  height: 100%;
+}
+
+.frame iframe {
+  position: relative;
+  z-index: -1;
+} */
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  align-items:flex-start;
+}
+
+.navigation .navigation-bar {
+  position: fixed;
+  z-index: 99999;
+}
+
+.navigation .navigation-bar .category {
+  margin-top: 2.5rem;
+  font-size: 24px;
+  color: #5a5a5a;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.navigation .navigation-bar .category p {
+  cursor: pointer;
+
+}
+
+
+
