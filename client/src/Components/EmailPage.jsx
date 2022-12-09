@@ -28,7 +28,9 @@ const EmailPage = () => {
         }
         fetchData()
         // eslint-disable-next-line
-    }, [setData])
+    }, [])
+
+    console.log(data)
 
     const changeWidth = () => {
         width === 700 ? setWidth(400) : setWidth(700);
@@ -40,7 +42,7 @@ const EmailPage = () => {
 
     let html
 
-    if (data[0]?.type === "Content Block") {
+    if (data.length > 0 && data[0]?.type === "Content Block") {
         html = template.replace("%%Content_Block%%", data[0]?.html_code )
         html = html.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
     } else {
