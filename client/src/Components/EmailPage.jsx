@@ -11,10 +11,7 @@ const EmailPage = () => {
 
     const { id } = useParams()
 
-    console.log(id)
-    
-
-    const [data, setData] = useState([])
+    const [data, setData] = useState({})
     const [width, setWidth] = useState(700)
 
 
@@ -23,7 +20,7 @@ const EmailPage = () => {
         const fetchData = async () => {
             try {
                 const response = await ProjectFinder.get(`/${id}`)
-                console.log(response)
+                console.log(response.data.rows)
                 setData(response.data.rows)
             } catch (err) {
                 console.log(err)
@@ -33,26 +30,24 @@ const EmailPage = () => {
         // eslint-disable-next-line
     }, [])
 
-    console.log(data)
-
     const changeWidth = () => {
         width === 700 ? setWidth(400) : setWidth(700);
     }
 
     const copyHtml = () => {
-        navigator.clipboard.writeText(data[0]?.html_code)
+        navigator.clipboard.writeText(data.html_code)
     }
 
     let html
 
-    if (data.length > 0) {
-        if (data?.[0].type === "Content Block") {
-            html = template.replace("%%Content_Block%%", data[0]?.html_code )
+        if(data.html_code) {
+        if (data?.type === "Content Block") {
+            html = template.replace("%%Content_Block%%", data.html_code )
             html = html.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
         } else {
-            html = data?.[0].html_code.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
-        }
-    }  
+            html = data.html_code.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
+        } 
+    }
 
     return (
         <div style={{display: 'flex'}}>
