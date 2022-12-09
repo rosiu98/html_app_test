@@ -92,8 +92,8 @@ app.post("/api/v1/projects/sendEmail", async (req, res) => {
 app.get("/api/v1/projects/:id", async (req, res) => {
 
     const id = req.params.id
-
-    const { rows } = await db.query("SELECT * FROM email_table WHERE id = $1;", [Number(id)])
+    
+    const { rows } = await db.query("SELECT * FROM email_table WHERE id = $1;", [id])
 
     res.status(200).json({
         status: "success",
