@@ -10,6 +10,8 @@ const EmailPage = () => {
 
 
     const { id } = useParams()
+
+    console.log(id)
     
 
     const [data, setData] = useState([])
@@ -21,6 +23,7 @@ const EmailPage = () => {
         const fetchData = async () => {
             try {
                 const response = await ProjectFinder.get(`/${id}`)
+                console.log(response)
                 setData(response.data.rows)
             } catch (err) {
                 console.log(err)
