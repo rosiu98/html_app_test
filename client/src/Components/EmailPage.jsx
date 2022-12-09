@@ -42,12 +42,14 @@ const EmailPage = () => {
 
     let html
 
-    if (data.length > 0 && data[0]?.type === "Content Block") {
-        html = template.replace("%%Content_Block%%", data[0]?.html_code )
-        html = html.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
-    } else {
-        html = data[0]?.html_code.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
-    }
+    if (data.length > 0) {
+        if (data?.[0].type === "Content Block") {
+            html = template.replace("%%Content_Block%%", data[0]?.html_code )
+            html = html.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
+        } else {
+            html = data?.[0].html_code.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
+        }
+    }  
 
     return (
         <div style={{display: 'flex'}}>
