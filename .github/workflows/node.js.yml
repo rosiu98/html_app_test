@@ -27,8 +27,8 @@ jobs:
     - run: npm ci
     - run: npm install
     - run: npm install --prefix server
-    - run: cd client
-           npm install
-    - run: cd client  
+    - run: npm install      
+    - run: |
+           cd client  
            npm run build
     - run: pm2 restart 0
