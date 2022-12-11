@@ -26,8 +26,8 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: 
-        npm install
-        cd client
+        npm install && 
+        cd client &&
         npm install
     - run:
         cd client &&
