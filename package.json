@@ -1,0 +1,25 @@
+{
+  "name": "html_app_deploy_test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "npm start --prefix server",
+    "client": "npm start --prefix client",
+    "production": "npm build --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosiu98/html_app_test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rosiu98/html_app_test/issues"
+  },
+  "homepage": "https://github.com/rosiu98/html_app_test#readme",
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
