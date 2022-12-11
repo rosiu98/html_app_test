@@ -31,4 +31,4 @@ jobs:
         npm install
         npm run build
     - run: pm2 restart 0
-    - working-derectory: ./
+      working-derectory: ./
