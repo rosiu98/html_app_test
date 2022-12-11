@@ -6,6 +6,7 @@
   "scripts": {
     "server": "npm start --prefix server",
     "client": "npm start --prefix client",
+    "dobre": "concurrently \"npm install -- prefix server\" \"npm install --prefix client\"",
     "production": "npm run build --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
@@ -20,6 +21,8 @@
   },
   "homepage": "https://github.com/rosiu98/html_app_test#readme",
   "dependencies": {
-    "concurrently": "^7.6.0"
+    "concurrently": "^7.6.0",
+    "prefix": "^1.0.0",
+    "server": "^1.0.38"
   }
 }
