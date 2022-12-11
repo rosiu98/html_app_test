@@ -24,14 +24,14 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-      - name: Install dependencies
-      - run: npm ci
-      - run: npm install
-      - name: Server
-        working-directory: ./server
-        run: npm install
-      - name: Client
-        working-directory: ./client
-      - run: npm install    
-      - run: npm run build
-      - run: pm2 restart 0
+    - run: npm ci
+    - run: npm install
+    - name: Server
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+      working-directory: ./server
+    - run: npm ci
+    - run: npm install
+
