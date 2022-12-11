@@ -27,7 +27,9 @@ jobs:
     - run: npm ci
     - run: npm install
     - run: npm install --prefix server
-    - run: npm install      
+    - run: |
+           cd client  
+           npm install    
     - run: |
            cd client  
            npm run build
