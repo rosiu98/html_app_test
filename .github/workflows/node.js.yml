@@ -11,6 +11,12 @@ jobs:
   build:
 
     runs-on: self-hosted
+    env:
+      working-directory: ./
+
+    defaults:
+      run:
+        working-directory: ${{ env.working-directory }}
 
     strategy:
       matrix:
@@ -31,4 +37,3 @@ jobs:
         npm install
         npm run build
     - run: pm2 restart 0
-      working-derectory: ./
