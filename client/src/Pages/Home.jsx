@@ -117,7 +117,7 @@ const Home = () => {
                     <button className='button' onClick={showAddProject}>Add Project</button>
                     </div>
                     <div className='category'>
-                        <h2>Categories</h2>
+                        <h2>Categories Test</h2>
                     <p onClick={() => selectCategory('All')}>All</p> 
                     {listOfCategories.map(item => (
                         <p key={item} onClick={() => selectCategory(item)}>{item}</p> 
