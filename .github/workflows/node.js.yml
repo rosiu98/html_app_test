@@ -12,7 +12,7 @@ jobs:
 
     runs-on: self-hosted
     env:
-      working-directory: /home/ubuntu/apps/html_app/
+      working-directory: ./home/ubuntu/apps/html_app/
 
     defaults:
       run:
@@ -30,8 +30,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: ls
+    - run: pwd
     - run: npm ci
-    - run: 
+    - run:
+        cd /home/ubuntu/apps/html_app/ 
         npm install
         cd client
         npm install
