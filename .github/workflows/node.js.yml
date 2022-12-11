@@ -8,7 +8,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  server:
 
     runs-on: self-hosted
 
@@ -24,8 +24,28 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
     - run: npm install
-    - run: npm run dobre
-    - run: npm run production
+    - run: npm pwd
+    - run: pm2 stop
+    - run: npm install --prefix server
     - run: pm2 restart 0
+
+  client:
+    runs-on: self-hosted
+      defaults:
+        run:
+          working-directory: ./client
+      # When application is successfully tested and build has been generated
+      # Then we can start with deployment
+
+      steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm install
+      - run: npm pwd
+      - run: pm2 stop
+      - run: npm install
+      - run: pm2 restart 0
