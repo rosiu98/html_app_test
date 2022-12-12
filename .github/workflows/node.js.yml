@@ -47,4 +47,5 @@ jobs:
         cache: 'npm'
     - run: pm2 stop 0
     - run: npm install
+    - run: npm build
     - run: pm2 restart 0
