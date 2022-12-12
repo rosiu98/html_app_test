@@ -38,7 +38,7 @@ jobs:
         working-directory: ./client
       # When application is successfully tested and build has been generated
       # Then we can start with deployment
-    needs: server
+    # needs: server
     steps:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
