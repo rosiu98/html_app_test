@@ -8,27 +8,27 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # server:
+  server:
 
-  #   runs-on: self-hosted
+    runs-on: self-hosted
 
-  #   strategy:
-  #     matrix:
-  #       node-version: [18.x]
-  #       # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Use Node.js ${{ matrix.node-version }}
-  #     uses: actions/setup-node@v3
-  #     with:
-  #       node-version: ${{ matrix.node-version }}
-  #       cache: 'npm'
-  #   - run: npm install
-  #   - run: pwd
-  #   - run: pm2 stop 0 
-  #   - run: npm install --prefix server
-  #   - run: pm2 restart 0
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm install
+    - run: pwd
+    - run: pm2 stop 0 
+    - run: npm install --prefix server
+    - run: pm2 restart 0
 
   client:
 
@@ -38,7 +38,7 @@ jobs:
         working-directory: ./client
       # When application is successfully tested and build has been generated
       # Then we can start with deployment
-    # needs: server
+    needs: server
     steps:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
