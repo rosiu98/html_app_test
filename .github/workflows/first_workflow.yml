@@ -18,3 +18,7 @@ jobs:
         script: |
           cd /home/ubuntu/apps/html_app/html_app_test
           pwd
+          git pull
+          npm run build
+          npm run production
+          pm2 restart 0
