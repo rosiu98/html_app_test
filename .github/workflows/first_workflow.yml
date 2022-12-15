@@ -16,4 +16,5 @@ jobs:
         key: ${{ secrets.OMG_SECRET }}
         port: 22
         script: |
+          cd /home/ubuntu/apps/html_app/html_app_test
           pwd
