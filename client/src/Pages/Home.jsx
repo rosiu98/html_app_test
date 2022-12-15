@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useState } from 'react'
 import Lottie from 'lottie-react';
 import loadingFile from '../apis/loading.json'
-import ProjectFinder from '../apis/ProjectFinder';
 import EmailList from '../Components/EmailList';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,36 +15,38 @@ const Home = () => {
     const [type, setType] = useState("")
     const [contentblock , setContentBlock] = useState("")
     const [htmlCode, setHtmlCode] = useState("");
-    const [data, setData] = useState([]);
+
     const [show, setShow] = useState(false);
-    const [loading, setLoading] = useState(false)
+
     const [selectedCategory, setSelectedCategory] = useState('All')
     const [selectedContentBlock, setSelectedContentBlock] = useState('')
     const listOfCategories = ['Cibc', 'MountainDew', 'TastyRewards', 'Gatorade']
     const listOfContentBlocks = ['PreHeader', 'Logo', 'TwoColumnHeader', 'Body', 'OneCta', 'Rating', 'Legal']
-    const emailsData = useEmailsDataStore((state) => state.emails)
-    const fetchEmails = useEmailsDataStore((state) => state.fetchEmails);
+
+    const data = useEmailsDataStore((state) => state.emails)
+    const fetchEmails= useEmailsDataStore((state) => state.fetchEmails);
     const addEmail = useEmailsDataStore((state) => state.addEmail)
+    const loading = useEmailsDataStore((state) => state.loading)
 
     useEffect(() => {
         fetchEmails();
-        const fetchData = async () => {
-            try {
-                const response = await ProjectFinder.get("/")
-                setData(response.data.rows)
-            } catch (err) {
-                console.log(err)
-            }
-        }
-        fetchData()
+        // const fetchData = async () => {
+        //     try {
+        //         const response = await ProjectFinder.get("/")
+        //         setData(response.data.rows)
+        //     } catch (err) {
+        //         console.log(err)
+        //     }
+        // }
+        // fetchData()
         
-    }, [setData])
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setLoading(true)
+
         try {
-            addEmail({
+            await addEmail({
                 name,
                 html_code: htmlCode,
                 category,
@@ -72,6 +73,7 @@ const Home = () => {
         //         console.log(tokenData)
 
             // setData([ createPage.data.rows[0] , ...data])
+            if(loading === false) {
             toast.success(`${name} have been created!`, {
                 position: "top-right",
                 autoClose: 5000,
@@ -85,21 +87,17 @@ const Home = () => {
             setCategory("")
             setType("")
             setContentBlock("")
-            setLoading(false)
             setShow(!show)
+        }
         } catch (err) {
             console.log(err)
         }
     }
 
-    console.log(emailsData)
+    console.log(loading)
 
     const showAddProject = async (e) => {
         e.preventDefault()
-        // const tokenData = await ProjectFinder.post("/sendEmail", {
-        //     image: data[0].image
-        // })
-        //         console.log(tokenData)
         setShow(!show)
         setType("")
     }
