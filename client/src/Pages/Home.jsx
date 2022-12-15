@@ -7,6 +7,7 @@ import ProjectFinder from '../apis/ProjectFinder';
 import EmailList from '../Components/EmailList';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import useEmailsDataStore from '../stores/emailsData';
 
 const Home = () => {
 
@@ -22,8 +23,12 @@ const Home = () => {
     const [selectedContentBlock, setSelectedContentBlock] = useState('')
     const listOfCategories = ['Cibc', 'MountainDew', 'TastyRewards', 'Gatorade']
     const listOfContentBlocks = ['PreHeader', 'Logo', 'TwoColumnHeader', 'Body', 'OneCta', 'Rating', 'Legal']
+    const emailsData = useEmailsDataStore((state) => state.emails)
+    const fetchEmails = useEmailsDataStore((state) => state.fetchEmails);
+    const addEmail = useEmailsDataStore((state) => state.addEmail)
 
     useEffect(() => {
+        fetchEmails();
         const fetchData = async () => {
             try {
                 const response = await ProjectFinder.get("/")
@@ -40,7 +45,7 @@ const Home = () => {
         e.preventDefault()
         setLoading(true)
         try {
-            const feedback = await ProjectFinder.post("/", {
+            addEmail({
                 name,
                 html_code: htmlCode,
                 category,
@@ -48,17 +53,25 @@ const Home = () => {
                 contentblock
                 
             })
-            const id = feedback.data.rows[0].id;
+        //     const feedback = await ProjectFinder.post("/", {
+        //         name,
+        //         html_code: htmlCode,
+        //         category,
+        //         type: type,
+        //         contentblock
+                
+        //     })
+        //     const id = feedback.data.rows[0].id;
 
-            const createPage = await ProjectFinder.get(`/screenshot/${id}`)
-            console.log(createPage.data)
+        //     const createPage = await ProjectFinder.get(`/screenshot/${id}`)
+        //     console.log(createPage.data)
 
-            const tokenData = await ProjectFinder.post("/sendEmail", {
-            image: createPage.data.image
-        })
-                console.log(tokenData)
+        //     const tokenData = await ProjectFinder.post("/sendEmail", {
+        //     image: createPage.data.image
+        // })
+        //         console.log(tokenData)
 
-            setData([ createPage.data.rows[0] , ...data])
+            // setData([ createPage.data.rows[0] , ...data])
             toast.success(`${name} have been created!`, {
                 position: "top-right",
                 autoClose: 5000,
@@ -78,6 +91,8 @@ const Home = () => {
             console.log(err)
         }
     }
+
+    console.log(emailsData)
 
     const showAddProject = async (e) => {
         e.preventDefault()
@@ -105,6 +120,7 @@ const Home = () => {
        return data.filter(item => item.category === selectedCategory)
        
     }
+
 
     
 

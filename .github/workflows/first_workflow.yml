@@ -1,0 +1,19 @@
+name: Deployment Workflow
+on:
+  push:
+    branches: [main]
+
+jobs:
+  job_one:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: testing email website
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: 52.57.247.29
+        username: ubuntu
+        key: ${{ secrets.OMG_SECRET }}
+        port: 22
+        script: |
+          pwd
