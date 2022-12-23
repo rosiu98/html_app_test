@@ -1,12 +1,47 @@
 import create from 'zustand'
-import {persist} from 'zustand/middleware'
+import AuthApi from '../apis/AuthApi';
 import ProjectFinder from '../apis/ProjectFinder'
 
+const userInfoFromStorage = localStorage.getItem("userInfo")
+  ? JSON.parse(localStorage.getItem("userInfo"))
+  : false;
+
+
 const useEmailsDataStore = create(
-    persist(
         (set, get) => ({
             emails: [],
+            userInfo: userInfoFromStorage,
+            validToken: false,
             loading: false,
+            updateValidToken : (data) => {
+                set({validToken: data})
+            },
+            createUserInfo: async (data) => {
+
+                const config = {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                    },
+                  };
+                
+                const response = await AuthApi.post("/register", data, config)
+
+                localStorage.setItem("userInfo", JSON.stringify(response.data));
+                set({userInfo: response.data})
+
+            },
+            deleteUserInfo: () => {
+                localStorage.setItem('userInfo', null)
+                set({userInfo: null})
+            },
+            addUserInfo: async (data) => {
+                
+                const response = await AuthApi.post("/login", data)
+
+                localStorage.setItem("userInfo", JSON.stringify(response.data));
+                set({userInfo: response.data})
+
+            },
             fetchEmails: async () => {
                 const response = await ProjectFinder.get("/")
                 set({emails: response.data.rows})
@@ -30,7 +65,7 @@ const useEmailsDataStore = create(
                 set({emails: [createPage.data.rows[0], ...state.emails] })
                 set({loading: false})
             }
-        })
+        }
     )
 )
 

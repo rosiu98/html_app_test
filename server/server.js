@@ -6,11 +6,12 @@ const cors = require("cors");
 const puppeteer = require("puppeteer");
 const path = require('path')
 const { fs:fsmemfs } = require('memfs')
-const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database } = require("./s3Service");
+const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database, s3Uploadv2Picture } = require("./s3Service");
 const cron = require('node-cron')
 const fs = require('fs');
 const { template } = require("./template");
 const axios = require("axios")
+const jwtAuth = require("./routes/jwtAuth")
 
 
 
@@ -22,6 +23,8 @@ app.use(cors())
 
 
 app.use(morgan("dev"))
+
+app.use("/api/v1" , jwtAuth )
 
 // GET all Restaurants
 app.get("/api/v1/projects", async (req, res) => {
@@ -108,10 +111,10 @@ app.get("/api/v1/projects/:id", async (req, res) => {
 
 // CREATE a Project
 app.post("/api/v1/projects", async (req, res) => {
-    const { name, category, type, contentblock } = req.body
+    const { name, category, type, contentblock, user_id } = req.body
     let {html_code} = req.body
 
-    const { rows } = await db.query("INSERT INTO email_table (name, html_code, category, type, contentblock) VALUES ($1 , $2, $3, $4, $5) returning * ", [name, html_code, category, type, contentblock]);
+    const { rows } = await db.query("INSERT INTO email_table (name, html_code, category, type, contentblock, user_id) VALUES ($1 , $2, $3, $4, $5, $6) returning * ", [name, html_code, category, type, contentblock, user_id]);
     const pathFile = `/html_${rows[0].id}.html`
     const basename = `html_${rows[0].id}.html`
 
@@ -199,6 +202,19 @@ app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
         image
     })
 })
+
+//Create ProfileImage 
+
+// app.post('/api/v1/project/test', async (req, res) => {
+//     const image = req.body.image
+//     console.log(image)
+//     const aw3 = await s3Uploadv2Picture(image)
+
+//     res.status(201).json({
+//       aw3
+//     })
+
+// })
 
 // const today = new Date().toISOString().split("T")[0]
 

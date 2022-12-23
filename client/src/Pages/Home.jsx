@@ -23,25 +23,19 @@ const Home = () => {
     const listOfCategories = ['Cibc', 'MountainDew', 'TastyRewards', 'Gatorade']
     const listOfContentBlocks = ['PreHeader', 'Logo', 'TwoColumnHeader', 'Body', 'OneCta', 'Rating', 'Legal']
 
+    const userInfo = useEmailsDataStore((state) => state.userInfo)
     const data = useEmailsDataStore((state) => state.emails)
+    const deleteUserInfo = useEmailsDataStore((state) => state.deleteUserInfo)
     const fetchEmails= useEmailsDataStore((state) => state.fetchEmails);
     const addEmail = useEmailsDataStore((state) => state.addEmail)
     const loading = useEmailsDataStore((state) => state.loading)
 
-    useEffect(() => {
-        fetchEmails();
-        // const fetchData = async () => {
-        //     try {
-        //         const response = await ProjectFinder.get("/")
-        //         setData(response.data.rows)
-        //     } catch (err) {
-        //         console.log(err)
-        //     }
-        // }
-        // fetchData()
-        
-    }, [])
 
+    useEffect(() => {
+        fetchEmails();   
+    }, [fetchEmails])
+
+    
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -51,28 +45,10 @@ const Home = () => {
                 html_code: htmlCode,
                 category,
                 type: type,
-                contentblock
+                contentblock,
+                user_id: userInfo.rows.id
                 
             })
-        //     const feedback = await ProjectFinder.post("/", {
-        //         name,
-        //         html_code: htmlCode,
-        //         category,
-        //         type: type,
-        //         contentblock
-                
-        //     })
-        //     const id = feedback.data.rows[0].id;
-
-        //     const createPage = await ProjectFinder.get(`/screenshot/${id}`)
-        //     console.log(createPage.data)
-
-        //     const tokenData = await ProjectFinder.post("/sendEmail", {
-        //     image: createPage.data.image
-        // })
-        //         console.log(tokenData)
-
-            // setData([ createPage.data.rows[0] , ...data])
             if(loading === false) {
             toast.success(`${name} have been created!`, {
                 position: "top-right",
@@ -94,7 +70,10 @@ const Home = () => {
         }
     }
 
-    console.log(loading)
+    const Logout = () => {
+        deleteUserInfo()
+    }
+
 
     const showAddProject = async (e) => {
         e.preventDefault()
@@ -120,8 +99,6 @@ const Home = () => {
     }
 
 
-    
-
     return (
         <>
             <div className="grid-box">
@@ -140,6 +117,12 @@ const Home = () => {
                     {listOfContentBlocks.map(item => (
                         <p key={item} onClick={() => setSelectedContentBlock(item)}>{item}</p> 
                     ))}
+                    </div>
+                    <div className='add-project'>
+                    <button className='button' onClick={Logout}>Logout</button>
+                    </div>
+                    <div className="add-project">
+                        <img width={'80'} src={userInfo.rows.user_image} alt={userInfo.rows.user_name} />
                     </div>
                     </div>
                 </div>
