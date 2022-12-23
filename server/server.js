@@ -30,6 +30,7 @@ app.use("/api/v1" , jwtAuth )
 app.get("/api/v1/projects", async (req, res) => {
 
     const { rows } = await db.query("SELECT * FROM email_table ORDER BY id DESC;")
+    console.log(process.env.jwtSecret)
     res.status(200).json({
         status: "success",
         results: rows.length,
