@@ -7,6 +7,7 @@ import EmailList from '../Components/EmailList';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import useEmailsDataStore from '../stores/emailsData';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
 
@@ -122,7 +123,9 @@ const Home = () => {
                     <button className='button' onClick={Logout}>Logout</button>
                     </div>
                     <div className="add-project">
+                        <Link to='/profile'>
                         <img width={'80'} src={userInfo.rows.user_image} alt={userInfo.rows.user_name} />
+                        </Link>
                     </div>
                     </div>
                 </div>

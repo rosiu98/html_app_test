@@ -30,7 +30,6 @@ app.use("/api/v1" , jwtAuth )
 app.get("/api/v1/projects", async (req, res) => {
 
     const { rows } = await db.query("SELECT * FROM email_table ORDER BY id DESC;")
-    console.log(`${process.env.JWTSECRET}`)
     res.status(200).json({
         status: "success",
         results: rows.length,
@@ -182,19 +181,29 @@ app.get('/views/images/:filename', (req, res) => {
 app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
     const id = req.params.id;
     const url = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/html_${id}.html`
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        defaultViewport: null,
+    });
     const page = await browser.newPage();
-    await page.setViewport({
-        width:1280,
-        height:1000
-    })
+    // await page.setViewport({
+    //     width:700,
+    //     height:1000
+    // })
     await page.goto(url);
+    // const pageHeight = await page.evaluate(() => { window.innerHeight; })
     const pathFile = path.join(__dirname + `/views/images/screenshot${id}.png`)
     // const basename = path.basename(__dirname + `/views/images/screenshot${id}.png`)
     const basename = `screenshot${id}.png`
     const image = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/images/screenshot${id}.png`
-    // await page.screenshot({path: path.join(__dirname + `/views/images/screenshot${id}.png`), fullPage: true});
-    const screenshot = await page.screenshot({fullPage: true});
+    // const screenshot = await page.screenshot({fullPage: true});
+    const body = await page.$('body');
+    const bounding_box = await body.boundingBox();
+    const screenshot = await page.screenshot({clip: {
+        x: bounding_box.x,
+        y: bounding_box.y,
+        width: bounding_box.width,
+        height: bounding_box.height 
+    }});
     const {rows} =  await db.query("UPDATE email_table SET image = $1 WHERE id = $2 returning *", [ image, id])
     await s3Uploadv2Screenshot(screenshot ,basename)
     res.status(201).json({

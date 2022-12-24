@@ -11,6 +11,7 @@ const useEmailsDataStore = create(
         (set, get) => ({
             emails: [],
             userInfo: userInfoFromStorage,
+            userEmails: [],
             validToken: false,
             loading: false,
             updateValidToken : (data) => {
@@ -45,6 +46,12 @@ const useEmailsDataStore = create(
             fetchEmails: async () => {
                 const response = await ProjectFinder.get("/")
                 set({emails: response.data.rows})
+            },
+            getEmails: async (id) => {
+
+                const response = await AuthApi.get(`/profile/${id}`)
+                set({userEmails: response.data.rows})
+
             },
             addEmail: async (data) => {
                 set({loading: true})

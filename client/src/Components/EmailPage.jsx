@@ -13,6 +13,7 @@ const EmailPage = () => {
 
     const [data, setData] = useState({})
     const [width, setWidth] = useState(700)
+    const [value, setValue] = useState(true)
 
 
 
@@ -20,7 +21,6 @@ const EmailPage = () => {
         const fetchData = async () => {
             try {
                 const response = await ProjectFinder.get(`/${id}`)
-                console.log(response.data.rows)
                 setData(response.data.rows)
             } catch (err) {
                 console.log(err)
@@ -30,9 +30,10 @@ const EmailPage = () => {
         // eslint-disable-next-line
     }, [])
 
-
-    console.log(Object.keys(data).length)
-
+    const showValue = () => {
+        setValue(!value)
+    }
+ 
     const changeWidth = () => {
         width === 700 ? setWidth(400) : setWidth(700);
     }
@@ -54,39 +55,50 @@ const EmailPage = () => {
 
     return (
         <div style={{display: 'flex'}}>
-        <div className='frame'>
-            <IframeResizer
-            key={width}
-                sizeHeight={true}
-                sizeWidth={true}
-                checkOrigin={false}
-                heightCalculationMethod={width === 700 ? 'lowestElement' : 'lowestElement'}
-                style={{ width: width}}
-
-                frameBorder='0'
-                autoResize={true}
-                srcDoc={html} />
-        </div>
-        <div>
-        <button onClick={changeWidth} className='button'>{width === 700 ? 'Mobile' : 'Desktop'}</button>
-        <button onClick={copyHtml} className='button'>Copy</button>
-        </div>
-        {/* <div className='code' style={{height: '400px'}}>
-        {data[0] &&
+        {value ? (
+                    <div className='frame'>
+                    <IframeResizer
+                    key={width}
+                        sizeHeight={true}
+                        sizeWidth={true}
+                        checkOrigin={false}
+                        heightCalculationMethod={width === 700 ? 'lowestElement' : 'lowestElement'}
+                        style={{ width: width}}
+        
+                        frameBorder='0'
+                        autoResize={true}
+                        srcDoc={html} />
+                </div>
+        ) :         <div className='code' style={{height: '400px'}}>
+        {data &&
         <CodeBlock
-      text={data[0].html_code}
+      text={data.html_code}
       language={"html"}
       showLineNumbers={false}
+      codeBlock={true}
     //   startingLineNumber={1}
       theme={dracula}
       customStyle={{
-        height: '400px',
+        width: '700px',
+        height: '100vh',
         overflow: 'scroll',
+        fontSize: '12px',
+        whiteSpace: 'pre-wrap',
+        wordWrap: 'break-word'
+
       }}
     />
 }
 
-        </div> */}
+        </div> }    
+
+        <div>
+
+        {value && <button onClick={changeWidth} className='button'>{width === 700 ? 'Mobile' : 'Desktop'}</button>}
+        <button onClick={copyHtml} className='button'>Copy</button>
+        <button className='button' onClick={showValue}>{value ? 'View Code' : 'View Design' }</button>
+        
+        </div>
         </div>
     )
 }

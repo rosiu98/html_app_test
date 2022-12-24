@@ -125,7 +125,7 @@ router.get("/is-verify", authorization, async (req, res) => {
     }
 })
 
-router.get("/profile/:id", authorization, async (req, res) => {
+router.get("/profile/:id", async (req, res) => {
     try {
         const id = req.params.id
 

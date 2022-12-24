@@ -8,6 +8,7 @@ import Register from './Pages/Register';
 import { useEffect } from 'react';
 import AuthApi from './apis/AuthApi';
 import useEmailsDataStore from './stores/emailsData';
+import Profile from './Pages/Profile';
 
 function App() {
 
@@ -54,6 +55,7 @@ function App() {
                   <Route element={<ProtectedRoutes/>}> 
                   <Route exact path="/" element={<Home />} />
                   <Route path="/emails/:id" element={<EmailPage/>} />
+                  <Route path="/profile" element={<Profile/>} />
                   </Route>
          
               
