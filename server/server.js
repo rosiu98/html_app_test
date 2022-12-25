@@ -26,14 +26,54 @@ app.use(morgan("dev"))
 
 app.use("/api/v1" , jwtAuth )
 
-// GET all Restaurants
+// GET all Projects
+// app.get("/api/v1/projects", async (req, res) => {
+
+//     const { rows } = await db.query("SELECT * FROM email_table ORDER BY id DESC;")
+//     res.status(200).json({
+//         status: "success",
+//         results: rows.length,
+//         rows
+//     })
+// })
+
+// GET all Projects with page and limit
 app.get("/api/v1/projects", async (req, res) => {
 
-    const { rows } = await db.query("SELECT * FROM email_table ORDER BY id DESC;")
+    const category = req.query.category
+    const page = req.query.page
+    const limit = req.query.limit
+    const contentblock = req.query.contentBlock
+    const query = req.query.query
+
+    console.log(query)
+
+
+
+     const { rows } = query ? await db.query("SELECT * FROM email_table WHERE name LIKE $1 ORDER BY id DESC;", ['%' +query + '%']) : category && contentblock ? await db.query("SELECT * FROM email_table WHERE category = $1 AND contentblock = $2 ORDER BY id DESC;", [category, contentblock]) 
+     : category ? await db.query("SELECT * FROM email_table WHERE category = $1 ORDER BY id DESC;", [category])
+     : contentblock ? await db.query("SELECT * FROM email_table WHERE contentblock = $1 ORDER BY id DESC;", [contentblock])
+     : await db.query("SELECT * FROM email_table ORDER BY id DESC;")
+
+
+    let hasMore = false
+    let results = rows
+
+
+    if(page && limit) {
+        const startIndex = (page - 1) * limit
+        const endIndex  = page * limit
+        
+        hasMore = endIndex < rows.length
+        results = rows.slice(startIndex, endIndex)
+    }
+    
+
     res.status(200).json({
         status: "success",
-        results: rows.length,
-        rows
+        length: results.length,
+        hasMore,
+        rows: results
     })
 })
 

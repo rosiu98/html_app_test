@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import AuthApi from './apis/AuthApi';
 import useEmailsDataStore from './stores/emailsData';
 import Profile from './Pages/Profile';
+import HomePagination from './Pages/HomePagination';
 
 function App() {
 
@@ -53,12 +54,11 @@ function App() {
     <div className="App">
             <Routes>
                   <Route element={<ProtectedRoutes/>}> 
-                  <Route exact path="/" element={<Home />} />
+                  <Route exact path="/" element={<HomePagination />} />
                   <Route path="/emails/:id" element={<EmailPage/>} />
                   <Route path="/profile" element={<Profile/>} />
                   </Route>
          
-              
                 <Route path="/login" element={<Login/>} />
                 <Route path="/register" element={<Register/>} />
                 <Route path="*" element={<Login />} />

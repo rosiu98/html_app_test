@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
 import useEmailsDataStore from '../stores/emailsData'
-import { useNavigate } from 'react-router-dom'
 
 
 const Register = () => {

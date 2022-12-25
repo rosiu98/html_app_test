@@ -14,6 +14,32 @@ const useEmailsDataStore = create(
             userEmails: [],
             validToken: false,
             loading: false,
+            query: "",
+            category: null,
+            pageNumber : 1,
+            contentBlock: null,
+            setQuery: (data) => {
+
+                const state = get()
+
+                set({query: data})
+                
+                if(state.query) {
+                    set({category: null, pageNumber: 1, contentBlock:null})
+
+                }
+            },
+            setPageNumber: (data) => {
+                set({pageNumber : data})
+            },
+            selectCategory: (data) => {
+                set({category: data})
+                set({pageNumber: 1})
+            },
+            selectContentBlock: (data) => {
+                set({contentBlock: data})
+                set({pageNumber: 1})
+            },
             updateValidToken : (data) => {
                 set({validToken: data})
             },
