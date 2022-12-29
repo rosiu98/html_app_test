@@ -169,9 +169,11 @@ textarea {
   width: 100vw;
   height: 100vh;
   max-height: 100%;
+  min-height: 800px;
   display: grid;
   place-items: center;
   padding: 0 2rem;
+  overflow: hidden;
 }
 
 .grid-main .container {
@@ -244,6 +246,15 @@ textarea {
     margin-top: 3.5rem;
     margin-bottom: 4.5rem;
   }
+
+  .grid-main .register .signup .input-container {
+    padding-bottom: 0 !important;
+  }
+
+  .grid-main .register .pictures p, .grid-main .register .pictures ul {
+    margin: 0 3rem 0 4.5rem !important;
+    list-style-position: outside !important;
+}
 
 }
 
@@ -321,6 +332,7 @@ textarea {
   background-color: #2A3990;
   color: #ffffff;
   font-size: 1.6rem;
+  line-height: 2.4rem;
   list-style-position: inside;
   padding-bottom: 5rem;
 }
