@@ -9,7 +9,7 @@ import AuthApi from './apis/AuthApi';
 import useEmailsDataStore from './stores/emailsData';
 import Profile from './Pages/Profile';
 import HomePagination from './Pages/HomePagination';
-import Loginv2 from './Pages/Login';
+import Registerv2 from './Pages/Register';
 
 function App() {
 

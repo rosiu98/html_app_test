@@ -16,7 +16,6 @@ const useEmailsDataStore = create(
             validToken: false,
             loading: false,
             query: "",
-            error: '',
             category: null,
             pageNumber : 1,
             contentBlock: null,
@@ -47,16 +46,27 @@ const useEmailsDataStore = create(
             },
             createUserInfo: async (data) => {
 
-                const config = {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                    },
-                  };
-                
-                const response = await AuthApi.post("/register", data, config)
-
-                localStorage.setItem("userInfo", JSON.stringify(response.data));
-                set({userInfo: response.data})
+                try {
+                    const config = {
+                        headers: {
+                          "Content-Type": "multipart/form-data",
+                        },
+                      };
+                    
+                    const response = await AuthApi.post("/register", data, config)
+    
+                    localStorage.setItem("userInfo", JSON.stringify(response.data));
+                    set({userInfo: response.data})
+                } catch (error) {
+                    toast.error(error.response.data, {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                }
 
             },
             deleteUserInfo: () => {
@@ -70,7 +80,6 @@ const useEmailsDataStore = create(
                     localStorage.setItem("userInfo", JSON.stringify(response.data));
                     set({userInfo: response.data})
                 } catch (error) {
-                    set({error: error.response.data})
                     toast.error(error.response.data, {
                         position: "top-right",
                         autoClose: 2000,

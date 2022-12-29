@@ -21,15 +21,27 @@ const fileFilter = (req, file, cb) => {
 // Registrering
 const upload = multer({ storage, fileFilter })
 
-router.post('/register', upload.single('image'), validInfo,   async (req, res) => {
+router.post('/register', upload.single('image'), validInfo, async (req, res) => {
     try {
-
+        const secretKeyServer = 'enverta'
         //1. destructure the req.fields(name, email, password)
 
-        const {name, email , password} = req.body
+        const {name, email , password, secretKey} = req.body
         const image = req.file
 
-        // //2. check if user exist (if user exist then throw error)
+        //1b. Check if secretKey is correct 
+
+        if(secretKey !== secretKeyServer) {
+            return res.status(401).send('Secret Key is not correct!') 
+        }
+
+        //1c. Check if image is not null 
+
+        if(!image) {
+            return res.status(401).send('Please make sure to add image :)') 
+        }
+
+        //2. check if user exist (if user exist then throw error)
 
         const user = await db.query("SELECT * FROM users WHERE user_email = $1", [email])
 

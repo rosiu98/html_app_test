@@ -2,10 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import useEmailsDataStore from '../stores/emailsData'
-import { toast, ToastContainer } from 'react-toastify'
-import { useEffect } from 'react'
+import { ToastContainer } from 'react-toastify'
 
-const Loginv2 = () => {
+
+const Login = () => {
 
     const [email , setEmail] = useState('')
     const [password , setPassword] = useState('')
@@ -69,4 +69,4 @@ const Loginv2 = () => {
   )
 }
 
-export default Loginv2
+export default Login

@@ -176,6 +176,7 @@ textarea {
 
 .grid-main .container {
   max-width: 1300px;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-radius: 10px;
@@ -189,6 +190,7 @@ textarea {
 
 .grid-main .container .picture img {
   width: 100%;
+  display: block;
 }
 
 .grid-main .container .signup {
@@ -314,6 +316,82 @@ textarea {
   color: #000;
   text-decoration: underline;
 }
+
+.grid-main .register .pictures {
+  background-color: #2A3990;
+  color: #ffffff;
+  font-size: 1.6rem;
+  list-style-position: inside;
+  padding-bottom: 5rem;
+}
+
+.grid-main .register .pictures img {
+  max-width: 500px;
+  display: block;
+  margin: 0 auto;
+}
+
+.grid-main .register .pictures p,
+.grid-main .register .pictures ul {
+  margin: 0 3rem 0 7.5rem;
+}
+
+.grid-main .register .pictures ul li {
+  margin-bottom: 1.5rem;
+}
+
+.grid-main .register .signup {
+  display: grid;
+  place-items: center;
+  
+}
+
+.grid-main .register .signup .input-container {
+  margin-top: 0;
+  padding: 5rem 0;
+}
+
+.grid-main .register .signup .input-container .picture {
+  text-align: center;
+  position: relative;
+}
+
+.grid-main .register .signup .input-container .picture img {
+  position: relative;
+}
+
+.grid-main .register .signup .input-container .picture img {
+  border-radius: 50%;
+  height: 60px;
+} 
+
+.grid-main .register .signup .input-container .picture input {
+  position: absolute;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 60px;
+  height: 160px;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.grid-main .register .signup .input-container .picture .file-button {
+  margin-top: 1rem;
+  background-color: #2A3990;
+  padding: 10px 15px;
+  color: #ffffff;
+  font-size: 1.2rem;
+  display: inline-block;
+  border-radius: 5px;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+
+
+
+
 
 
 
