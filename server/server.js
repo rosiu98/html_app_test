@@ -50,7 +50,7 @@ app.get("/api/v1/projects", async (req, res) => {
 
 
 
-     const { rows } = query ? await db.query("SELECT * FROM email_table WHERE name LIKE $1 ORDER BY id DESC;", ['%' +query + '%']) : category && contentblock ? await db.query("SELECT * FROM email_table WHERE category = $1 AND contentblock = $2 ORDER BY id DESC;", [category, contentblock]) 
+     const { rows } = query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%']) : category && contentblock ? await db.query("SELECT * FROM email_table WHERE category = $1 AND contentblock = $2 ORDER BY id DESC;", [category, contentblock]) 
      : category ? await db.query("SELECT * FROM email_table WHERE category = $1 ORDER BY id DESC;", [category])
      : contentblock ? await db.query("SELECT * FROM email_table WHERE contentblock = $1 ORDER BY id DESC;", [contentblock])
      : await db.query("SELECT * FROM email_table ORDER BY id DESC;")

@@ -19,8 +19,13 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Roboto";
+  font-family: 'Inter' , "Roboto" , sans-serif;
   min-height: 100vh;
+}
+
+.Toastify__toast-body {
+  font-size: 1.4rem;
+  font-family: 'Inter';
 }
 
 
@@ -159,5 +164,157 @@ textarea {
 .image-holder img {
   max-width: 60px;
 }
+
+.grid-main {
+  width: 100vw;
+  height: 100vh;
+  max-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 0 2rem;
+}
+
+.grid-main .container {
+  max-width: 1300px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.grid-main .container .picture {
+  /* width: 100%; */
+}
+
+
+.grid-main .container .picture img {
+  width: 100%;
+}
+
+.grid-main .container .signup {
+  background-color: #F4F4F4;
+  padding: 0 7.5rem;
+}
+
+.grid-main .container .signup .input-container {
+  margin-top: 9rem;
+  width: 100%;
+}
+
+@media screen and (max-width: 1200px) {
+
+  .grid-main .container .signup {
+    padding: 0 4.5rem;
+    display: grid;
+    place-items: center;
+    
+  }
+
+  .grid-main .container .signup .input-container {
+    margin-top: 0rem;
+    padding: 1.5rem 0;
+
+  }
+
+}
+
+@media screen and (max-width: 1000px) { 
+
+
+  .grid-main {
+    height: 100%;
+    padding: 1rem;
+  }
+
+  .grid-main .container { 
+    grid-template-columns: 1fr;
+  }
+
+  .grid-main .container .picture { 
+    grid-row: 2;
+  }
+
+  .grid-main .container .signup {
+    padding: 1rem;    
+  }
+
+  .grid-main .container .signup .input-container {
+    margin-top: 3.5rem;
+    margin-bottom: 4.5rem;
+  }
+
+}
+
+
+.grid-main .container .signup .input-container .picture img {
+  max-width: 60px;
+  display: block;
+  margin: 0 auto;
+}
+
+.grid-main .container .signup .input-container .title {
+  margin-top: 2.5rem;
+  margin-bottom: 3.5rem;
+  font-size: 40px;
+  text-align: center;
+}
+
+.grid-main .container .signup .input-container .form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.grid-main .container .signup .input-container .form-container .input-box {
+  padding: 18px 20px;
+  margin: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  font-size: 1.4rem;
+  color: #000;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-weight: 500;
+  background-color: #E0E1EA;
+  border-radius: 5px;
+}
+
+.grid-main .container .signup .input-container .form-container .input-box::placeholder {
+  color: #000;
+  font-size: 1.4rem;
+  font-weight: 500;
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+.grid-main .container .signup .input-container .input-button {
+  margin-top: 5rem;
+  width: 100%;
+  display: block;
+  background-color: #000;
+  color: white;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 18px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.grid-main .container .signup .input-container .back-link {
+  margin-top: 1.5rem;
+  text-align: right;
+  width: 100%;
+  font-size: 1.6rem;
+  color: #000;
+
+}
+
+.grid-main .container .signup .input-container .back-link a {
+  color: #000;
+  text-decoration: underline;
+}
+
+
 
 

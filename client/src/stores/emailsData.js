@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import create from 'zustand'
 import AuthApi from '../apis/AuthApi';
 import ProjectFinder from '../apis/ProjectFinder'
@@ -15,6 +16,7 @@ const useEmailsDataStore = create(
             validToken: false,
             loading: false,
             query: "",
+            error: '',
             category: null,
             pageNumber : 1,
             contentBlock: null,
@@ -62,12 +64,22 @@ const useEmailsDataStore = create(
                 set({userInfo: null})
             },
             addUserInfo: async (data) => {
-                
-                const response = await AuthApi.post("/login", data)
+                try {
+                    const response = await AuthApi.post("/login", data)
 
-                localStorage.setItem("userInfo", JSON.stringify(response.data));
-                set({userInfo: response.data})
-
+                    localStorage.setItem("userInfo", JSON.stringify(response.data));
+                    set({userInfo: response.data})
+                } catch (error) {
+                    set({error: error.response.data})
+                    toast.error(error.response.data, {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                }
             },
             fetchEmails: async () => {
                 const response = await ProjectFinder.get("/")

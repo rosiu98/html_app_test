@@ -1,5 +1,4 @@
 import './App.css';
-import Home from './Pages/Home';
 import {Route, Routes, useNavigate} from 'react-router-dom'
 import EmailPage from './Components/EmailPage';
 import Login from './Pages/Login';
@@ -10,6 +9,7 @@ import AuthApi from './apis/AuthApi';
 import useEmailsDataStore from './stores/emailsData';
 import Profile from './Pages/Profile';
 import HomePagination from './Pages/HomePagination';
+import Loginv2 from './Pages/Login';
 
 function App() {
 
@@ -58,7 +58,7 @@ function App() {
                   <Route path="/emails/:id" element={<EmailPage/>} />
                   <Route path="/profile" element={<Profile/>} />
                   </Route>
-         
+                  
                 <Route path="/login" element={<Login/>} />
                 <Route path="/register" element={<Register/>} />
                 <Route path="*" element={<Login />} />
