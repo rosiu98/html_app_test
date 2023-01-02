@@ -15,10 +15,15 @@ const useEmailsDataStore = create(
             userEmails: [],
             validToken: false,
             loading: false,
+            categories: [],
             query: "",
             category: null,
             pageNumber : 1,
+            type: null,
             contentBlock: null,
+            setCategories : (data) => {
+                set({categories: data})
+            },
             setQuery: (data) => {
 
                 const state = get()
@@ -26,7 +31,7 @@ const useEmailsDataStore = create(
                 set({query: data})
                 
                 if(state.query) {
-                    set({category: null, pageNumber: 1, contentBlock:null})
+                    set({category: null, pageNumber: 1, contentBlock:null, type: null})
 
                 }
             },
@@ -35,10 +40,16 @@ const useEmailsDataStore = create(
             },
             selectCategory: (data) => {
                 set({category: data})
+                set({type: null})
                 set({pageNumber: 1})
             },
             selectContentBlock: (data) => {
                 set({contentBlock: data})
+                set({pageNumber: 1})
+            },
+            selectType: (data) => {
+                set({type: data})
+                set({category: null})
                 set({pageNumber: 1})
             },
             updateValidToken : (data) => {

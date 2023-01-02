@@ -23,8 +23,6 @@ const EmailList = ({data}) => {
       navigate(`/emails/${id}`)
     }
 
-
-  
   return (
     <div style={{display: 'flex' , gap: '3rem' , flexWrap: 'wrap' , justifyContent: 'center'}}>
     {emails.map((data, index) => {

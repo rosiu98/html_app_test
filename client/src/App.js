@@ -9,7 +9,7 @@ import AuthApi from './apis/AuthApi';
 import useEmailsDataStore from './stores/emailsData';
 import Profile from './Pages/Profile';
 import HomePagination from './Pages/HomePagination';
-import Registerv2 from './Pages/Register';
+import Homev2 from './Pages/Homev2';
 
 function App() {
 
@@ -60,6 +60,7 @@ function App() {
                   </Route>
                   
                 <Route path="/login" element={<Login/>} />
+                <Route path='/test' element={<Homev2/>} />
                 <Route path="/register" element={<Register/>} />
                 <Route path="*" element={<Login />} />
             </Routes>

@@ -45,16 +45,42 @@ app.get("/api/v1/projects", async (req, res) => {
     const limit = req.query.limit
     const contentblock = req.query.contentBlock
     const query = req.query.query
+    const type = req.query.type 
 
-    console.log(query)
+    let SelectQuery = 'SELECT * FROM email_table WHERE'
+    let dataQuery
 
+    // Inital values
+    const initalFilter = [{ category, contentblock, type}]
 
+    // Checks if inital values are undefined , null or ''
+    const fullQuery = Object.entries(initalFilter[0]).filter(data => (data[1] !== undefined )).filter(data => (data[1] !== '' ))
 
-     const { rows } = query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%']) : category && contentblock ? await db.query("SELECT * FROM email_table WHERE category = $1 AND contentblock = $2 ORDER BY id DESC;", [category, contentblock]) 
-     : category ? await db.query("SELECT * FROM email_table WHERE category = $1 ORDER BY id DESC;", [category])
-     : contentblock ? await db.query("SELECT * FROM email_table WHERE contentblock = $1 ORDER BY id DESC;", [contentblock])
-     : await db.query("SELECT * FROM email_table ORDER BY id DESC;")
+     // Creating Dynamic SQL query
+    if(fullQuery.length > 0) {
+        dataQuery = fullQuery.map(data => data[1])
+        // console.log(dataQuery)
+        console.log('Working!')
+        fullQuery.forEach((data, index )=> {
+            SelectQuery += ` ${data[0]} = $${index + 1} ${index + 1 !== fullQuery.length ? 'AND' : ''}`
+        })
+        SelectQuery += 'ORDER BY id DESC;'
+    }
 
+    // console.log(fullQuery)
+
+    //  const { rows } = query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%'])
+      
+    //  : category && contentblock ? await db.query("SELECT * FROM email_table WHERE category = $1 AND contentblock = $2 ORDER BY id DESC;", [category, contentblock]) 
+    //  : category ? await db.query("SELECT * FROM email_table WHERE category = $1 ORDER BY id DESC;", [category])
+    //  : contentblock ? await db.query("SELECT * FROM email_table WHERE contentblock = $1 ORDER BY id DESC;", [contentblock])
+    //  : await db.query("SELECT * FROM email_table ORDER BY id DESC;")
+
+     const { rows } = query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%']) 
+     : fullQuery.length > 0 ? await db.query(SelectQuery, dataQuery)
+     : await db.query("SELECT * FROM email_table ORDER BY id DESC;")  
+
+    const count = await db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM   email_table GROUP  BY category UNION SELECT type, COUNT(*) AS Count FROM   email_table GROUP  BY type UNION SELECT 'All', COUNT(*) AS Count FROM   email_table) AS a ORDER BY a.category ASC;")
 
     let hasMore = false
     let results = rows
@@ -73,9 +99,11 @@ app.get("/api/v1/projects", async (req, res) => {
         status: "success",
         length: results.length,
         hasMore,
-        rows: results
+        rows: results,
+        count: count.rows
     })
 })
+
 
 // POST Send Email
 app.post("/api/v1/projects/sendEmail", async (req, res) => {
