@@ -1,14 +1,13 @@
 import React, {useRef, useEffect, useState} from 'react'
 import useEmailsSearch from '../Components/useEmailsSearch'
-import EmailList from '../Components/EmailList'
 import useEmailsDataStore from '../stores/emailsData'
 import { ToastContainer, toast } from 'react-toastify'
-import { Link, NavLink } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import loadingFile from '../apis/loading.json'
 import Lottie from 'lottie-react';
 import EmailListV2 from '../Components/EmailListV2'
 import Navigation from '../Components/Navigation'
+import AddProjectPopup from '../Components/AddProjectPopup'
 
 const Homev2 = () => {
 
@@ -19,8 +18,6 @@ const Homev2 = () => {
     const [htmlCode, setHtmlCode] = useState("");
 
     const [show, setShow] = useState(false);
-    const listOfCategories = ['Cibc', 'MountainDew', 'TastyRewards', 'Gatorade']
-    const listOfContentBlocks = ['PreHeader', 'Logo', 'TwoColumnHeader', 'Body', 'OneCta', 'Rating', 'Legal']
 
     const pageNumber = useEmailsDataStore((state) => state.pageNumber)
     const setPageNumber = useEmailsDataStore((state) => state.setPageNumber)
@@ -34,7 +31,6 @@ const Homev2 = () => {
     const selectContentBlock = useEmailsDataStore((state) => state.selectContentBlock)
     const query = useEmailsDataStore((state) => state.query)
     const setQuery = useEmailsDataStore((state) => state.setQuery)
-    const categories = useEmailsDataStore((state) => state.categories)
     
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -95,29 +91,6 @@ const Homev2 = () => {
 
 
     const library = useRef(null)
-    const categoriesRef = useRef(null)
-
-    const options = {}
-
-    const checkRef = () => {
-        if(library.current) {
-        const observer = new IntersectionObserver(function(entries, observer) {
-            entries.forEach(entry => {
-                // console.log(entry);
-                if(!entry.isIntersecting) {
-                    categoriesRef.current.className = 'categories'
-                    // console.log('I cannot see it')
-                } else {
-                    // console.log('I can see it')
-                    categoriesRef.current.className = 'categories hide'
-                }
-            })
-        }, options)
-
-        observer.observe(library.current)
-    }
-    }
-
 
     useEffect(() => {
         
@@ -126,9 +99,24 @@ const Homev2 = () => {
 
   return (
     <div className='main'>
-        <Navigation library={library}/>
+        <Navigation data={{show, setShow}} library={library}/>
         <EmailListV2 data={{emails, hasMore, loading, error, pageNumber ,setPageNumber, library}} />
+        <div onClick={() => setShow(!show)} className={show ? 'overlay blur' : 'overlay'}></div>
+        <AddProjectPopup data={{show, setShow}} />    
+        <ToastContainer
+                theme='colored'
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
     </div>
+    
   )
 }
 

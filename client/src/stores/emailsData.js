@@ -101,9 +101,13 @@ const useEmailsDataStore = create(
                     });
                 }
             },
-            fetchEmails: async () => {
-                const response = await ProjectFinder.get("/")
-                set({emails: response.data.rows})
+            // fetchEmails: async () => {
+            //     const response = await ProjectFinder.get("/")
+            //     set({emails: response.data.rows})
+            // },
+            setEmails: (data) => {
+
+                set({emails: data })
             },
             getEmails: async (id) => {
 
@@ -113,6 +117,7 @@ const useEmailsDataStore = create(
             },
             addEmail: async (data) => {
                 set({loading: true})
+                const loaderToast = toast.loading("Adding Email...")
                 // Get current emailsData
                 const state = get()
 
@@ -127,8 +132,18 @@ const useEmailsDataStore = create(
                 await ProjectFinder.post("/sendEmail", {
                 image: createPage.data.image })
 
-                set({emails: [createPage.data.rows[0], ...state.emails] })
+                set({emails: [createPage.data.rows[0], ...state.emails], pageNumber: 1, query: '' })
                 set({loading: false})
+                toast.update(loaderToast, {render: `${data.name} have been created!`,
+                    type: 'success',
+                    isLoading: false,
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    draggable: true,
+                    progress: undefined,
+            });
             }
         }
     )

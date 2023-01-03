@@ -9,6 +9,7 @@ const EmailListV2 = ({data}) => {
   const categories = useEmailsDataStore((state) => state.categories)
   const category = useEmailsDataStore((state) => state.category)
   const type = useEmailsDataStore((state) => state.type)
+  const loader = useEmailsDataStore((state) => state.loading)
   const selectCategory = useEmailsDataStore((state) => state.selectCategory)
   const selectType = useEmailsDataStore((state) => state.selectType)
   const observer = useRef()
@@ -65,6 +66,9 @@ const EmailListV2 = ({data}) => {
                   ))}                    
               </div>
               {/* Render Email cards */}
+              {loader && <div className="card">
+                  <img src="https://i.imgur.com/smZLfPS.png" alt="image"/>
+                </div>}
               {emails.map((data, index) => {
               if(emails.length === index + 1) { 
                 return <div ref={lastEmailElementRef} key={data.id} className="card" onClick={() => handleProjectSelect(data.id)}>

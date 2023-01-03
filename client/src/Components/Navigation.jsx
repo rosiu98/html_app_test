@@ -2,7 +2,9 @@ import React, {useRef, useEffect} from 'react'
 import { NavLink , Link } from 'react-router-dom';
 import useEmailsDataStore from '../stores/emailsData';
 
-const Navigation = ({library}) => {
+const Navigation = ({library, data}) => {
+
+    const {show ,setShow} = data
 
     const categories = useEmailsDataStore((state) => state.categories)
     const selectCategory = useEmailsDataStore((state) => state.selectCategory)
@@ -33,6 +35,11 @@ const Navigation = ({library}) => {
 
     const handleSearch = (e) => {
         setQuery(e.target.value.trim())
+    }
+
+    const showAddProject = (e) => {
+        e.preventDefault()
+        setShow(!show)
     }
 
     const selectAll = () => {
@@ -67,7 +74,7 @@ const Navigation = ({library}) => {
                 <NavLink to='/login'>Code&nbsp;Snippets</NavLink>
             </div>
             <div className="nav-button">
-                <div className="add-project-button">
+                <div onClick={showAddProject} className="add-project-button">
                     Add&nbsp;Project
                 </div>
             </div>

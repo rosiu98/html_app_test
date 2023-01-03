@@ -6,13 +6,16 @@ const useEmailsSearch = (query, pageNumber) => {
 
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
-    const [emails, setEmails] = useState([])
+    // const [emails, setEmails] = useState([])
 
+    const emails = useEmailsDataStore((state) => state.emails)
+    const setEmails = useEmailsDataStore((state) => state.setEmails)
     const [hasMore, setHasMore] = useState(false)
     const category = useEmailsDataStore((state) => state.category)
     const contentBlock = useEmailsDataStore((state) => state.contentBlock)
     const type = useEmailsDataStore((state) => state.type)
     const setCategories = useEmailsDataStore((state) => state.setCategories)
+    const loader = useEmailsDataStore((state) => state.loading)
     
     useEffect(() => {
         setLoading(true)
@@ -28,9 +31,8 @@ const useEmailsSearch = (query, pageNumber) => {
         }).then(res => {
             console.log(res.data)
             setCategories(res.data.count)
-            setEmails(prevEmails => {
-                return pageNumber === 1 ? res.data.rows : [...new Set ([...prevEmails, ...res.data.rows])]
-            })
+            setEmails(pageNumber === 1 ? res.data.rows : [...new Set ([...emails, ...res.data.rows])]
+            )
             setHasMore(res.data.hasMore)
             setLoading(false)
         }).catch(err => {
@@ -39,7 +41,7 @@ const useEmailsSearch = (query, pageNumber) => {
             console.log(err)
         })
         return () => cancel()
-    },[query, pageNumber, category, contentBlock, type])
+    },[query, pageNumber, category, contentBlock, type, loader])
 
 
   return {loading, error, emails, hasMore}

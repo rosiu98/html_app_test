@@ -1,4 +1,4 @@
-const listOfCategories = ['Cibc', 'MountainDew', 'TastyRewards', 'Gatorade']
+export const listOfCategories = ['Cibc', 'MountainDew', 'TastyRewards', 'Gatorade']
 
-const listOfContentBlocks = ['PreHeader', 'Logo', 'TwoColumnHeader', 'Body', 
+export const listOfContentBlocks = ['PreHeader', 'Logo', 'TwoColumnHeader', 'Body', 
                             'OneCta', 'Rating', 'Legal']
