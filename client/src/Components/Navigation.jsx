@@ -14,6 +14,7 @@ const Navigation = ({library, data}) => {
     const query = useEmailsDataStore((state) => state.query)
     const setQuery = useEmailsDataStore((state) => state.setQuery)
     const categoriesRef = useRef(null)
+    const clear = useEmailsDataStore((state) => state.clear)
 
         const checkRef = () => {
         if(library.current) {
@@ -69,8 +70,8 @@ const Navigation = ({library, data}) => {
         </div>
         <div className="navigation-desktop">
             <div className="links">
-                <NavLink to='/test'>All</NavLink>
-                <NavLink to='/login'>Emails</NavLink>
+                <NavLink onClick={() => clear()} to='/test'>All</NavLink>
+                <NavLink onClick={() => clear()} to='/emails'>Emails</NavLink>
                 <NavLink to='/login'>Code&nbsp;Snippets</NavLink>
             </div>
             <div className="nav-button">

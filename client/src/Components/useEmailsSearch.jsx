@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import useEmailsDataStore from '../stores/emailsData'
+import { useLocation } from 'react-router-dom';
 
 const useEmailsSearch = (query, pageNumber) => {
 
@@ -16,6 +17,10 @@ const useEmailsSearch = (query, pageNumber) => {
     const type = useEmailsDataStore((state) => state.type)
     const setCategories = useEmailsDataStore((state) => state.setCategories)
     const loader = useEmailsDataStore((state) => state.loading)
+    const selectType = useEmailsDataStore((state) => state.selectType)
+
+    const location = useLocation()
+
     
     useEffect(() => {
         setLoading(true)
@@ -30,7 +35,10 @@ const useEmailsSearch = (query, pageNumber) => {
             cancelToken: new axios.CancelToken(c => cancel = c)
         }).then(res => {
             console.log(res.data)
-            setCategories(res.data.count)
+
+            console.log(location.pathname)
+            
+            setCategories(location.pathname === '/emails' ? res.data.countType : res.data.count)
             setEmails(pageNumber === 1 ? res.data.rows : [...new Set ([...emails, ...res.data.rows])]
             )
             setHasMore(res.data.hasMore)
@@ -41,7 +49,17 @@ const useEmailsSearch = (query, pageNumber) => {
             console.log(err)
         })
         return () => cancel()
-    },[query, pageNumber, category, contentBlock, type, loader])
+    },[query, pageNumber, category, contentBlock, type, loader, location])
+
+
+    useEffect(() => {
+      
+    if(location.pathname === '/emails') {
+        selectType('Email')
+        console.log('loading second useEffect')
+    }
+    }, [location])
+    
 
 
   return {loading, error, emails, hasMore}

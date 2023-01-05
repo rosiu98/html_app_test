@@ -39,38 +39,68 @@ body {
 
 
 .center-box {
-  width: 500px;
+  width: 100%;
+  max-width: 700px;
+  min-height: 700px;
   display: grid;
   place-items: center;
+  background-color: #ffffff;
   font-size: 2rem;
-  position: fixed;
+  position: absolute;
   z-index: 99;
   top: 0;
   left: 50%;
-  transform: translate(-50%, 30%);
+  transform: translate(-50%, 5%);
+  border-radius: 10px;
 }
 
-
+.center-box .close-btn {
+  display: block;
+  padding: 1rem 2rem;
+  position: absolute;
+  top: 0;
+  text-align: left;
+  justify-self: end;
+  cursor: pointer;
+}
 
 .center-box label {
-  padding: 10px 0;
+  margin: 10px 0;
+  display: block;
 }
 
 .center-box form {
   width: 100%;
   max-width: 500px;
   padding: 20px;
+  margin: 2rem 0;
   border-radius: 8px;
   background-color: #ffffff;
-  -webkit-box-shadow: 18px 22px 49px -32px rgba(66, 68, 90, 0.32);
--moz-box-shadow: 18px 22px 49px -32px rgba(66, 68, 90, 0.32);
-box-shadow: 18px 22px 49px -32px rgba(66, 68, 90, 0.32);
+  border: 1px dashed #000;
 }
 
-input[type=text] {
+.center-box .input-field input,
+.center-box .input-field select,
+.center-box .input-field textarea {
+  padding: 18px 20px;
+  margin: 0;
   width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
+  border: 0;
+  outline: 0;
+  font-size: 1.4rem;
+  color: #000;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-weight: 500;
+  background-color: #E0E1EA;
+  border-radius: 4px;
+  border: 1px solid hsl(0, 0%, 80%);;
+}
+
+.center-box .input-field input::placeholder {
+  color: #000;
+  font-size: 1.4rem;
+  font-weight: 500;
+  font-family: 'Inter', 'Roboto', sans-serif;
 }
 
 select {
@@ -81,7 +111,8 @@ select {
 
 .button {
   margin-top: 15px;
-  background-color: #4CAF50; /* Green */
+  width: 100%;
+  background-color: #000;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -126,23 +157,11 @@ textarea {
     right: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
+    background-color: rgba(0, 0, 0, 0.7);
+    /* -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px); */
     z-index: 90;
 }
-
-/* .frame {
-  display: block;
-  position: relative;
-  z-index: 99999;
-  height: 100%;
-}
-
-.frame iframe {
-  position: relative;
-  z-index: -1;
-} */
 
 .navigation {
   display: flex;

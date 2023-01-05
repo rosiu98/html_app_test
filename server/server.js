@@ -69,18 +69,16 @@ app.get("/api/v1/projects", async (req, res) => {
 
     // console.log(fullQuery)
 
-    //  const { rows } = query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%'])
-      
-    //  : category && contentblock ? await db.query("SELECT * FROM email_table WHERE category = $1 AND contentblock = $2 ORDER BY id DESC;", [category, contentblock]) 
-    //  : category ? await db.query("SELECT * FROM email_table WHERE category = $1 ORDER BY id DESC;", [category])
-    //  : contentblock ? await db.query("SELECT * FROM email_table WHERE contentblock = $1 ORDER BY id DESC;", [contentblock])
-    //  : await db.query("SELECT * FROM email_table ORDER BY id DESC;")
-
      const { rows } = query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%']) 
      : fullQuery.length > 0 ? await db.query(SelectQuery, dataQuery)
      : await db.query("SELECT * FROM email_table ORDER BY id DESC;")  
 
     const count = await db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM   email_table GROUP  BY category UNION SELECT type, COUNT(*) AS Count FROM   email_table GROUP  BY type UNION SELECT 'All', COUNT(*) AS Count FROM   email_table) AS a ORDER BY a.category ASC;")
+
+    let countType
+    if(type) {
+        countType = await db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM email_table WHERE type = 'Email' GROUP BY category UNION SELECT 'All', COUNT(*) AS Count FROM email_table WHERE type = 'Email') AS a ORDER BY a.category ASC;")
+    }
 
     let hasMore = false
     let results = rows
@@ -100,7 +98,8 @@ app.get("/api/v1/projects", async (req, res) => {
         length: results.length,
         hasMore,
         rows: results,
-        count: count.rows
+        count: count.rows,
+        countType: countType && countType.rows
     })
 })
 
@@ -180,7 +179,18 @@ app.get("/api/v1/projects/:id", async (req, res) => {
 // CREATE a Project
 app.post("/api/v1/projects", async (req, res) => {
     const { name, category, type, contentblock, user_id } = req.body
+
+    
     let {html_code} = req.body
+    if(![name, category, html_code, type].every(Boolean)) {
+        return res.status(401).json("Please put all the details!");
+    }
+
+    if(type === 'Content Block' && Boolean(contentblock) === false) {
+        return res.status(401).json("Please select Library!");
+    }
+
+
 
     const { rows } = await db.query("INSERT INTO email_table (name, html_code, category, type, contentblock, user_id) VALUES ($1 , $2, $3, $4, $5, $6) returning * ", [name, html_code, category, type, contentblock, user_id]);
     const pathFile = `/html_${rows[0].id}.html`

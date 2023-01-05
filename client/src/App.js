@@ -61,6 +61,7 @@ function App() {
                   
                 <Route path="/login" element={<Login/>} />
                 <Route path='/test' element={<Homev2/>} />
+                <Route path='/emails' element={<Homev2/>} />
                 <Route path="/register" element={<Register/>} />
                 <Route path="*" element={<Login />} />
             </Routes>

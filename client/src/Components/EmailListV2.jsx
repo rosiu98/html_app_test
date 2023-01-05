@@ -1,17 +1,19 @@
 import React, {useRef, useCallback} from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import formatter from '../apis/formatter'
 import useEmailsDataStore from '../stores/emailsData'
 
 const EmailListV2 = ({data}) => {
 
   const {emails, hasMore, loading, error, pageNumber, setPageNumber, library} = data
-  const categories = useEmailsDataStore((state) => state.categories)
+  let categories = useEmailsDataStore((state) => state.categories)
   const category = useEmailsDataStore((state) => state.category)
   const type = useEmailsDataStore((state) => state.type)
   const loader = useEmailsDataStore((state) => state.loading)
   const selectCategory = useEmailsDataStore((state) => state.selectCategory)
+  const location = useLocation()
   const selectType = useEmailsDataStore((state) => state.selectType)
+  const selectCategoryEmails = useEmailsDataStore((state) => state.selectCategoryEmails)
   const observer = useRef()
   const lastEmailElementRef = useCallback(node => {
       if (loading) return
@@ -36,7 +38,7 @@ const EmailListV2 = ({data}) => {
       selectType(null)
     }
 
-    // debugger;
+
     return ( 
       <section className="content">
       <div className="content-container">
@@ -46,9 +48,23 @@ const EmailListV2 = ({data}) => {
                   <div className="library-title">
                       Category
                   </div>
+
+
+
                   {categories.map(data => (
                       <div key={data.category} className="library-category">
-                      {data.category === 'All' ? (
+                      {
+                      (data.category === 'All') && (location.pathname === '/emails') ? 
+                      <div onClick={() => selectCategoryEmails(null)} className={((category === null) && (type === 'Email')) ? 'category-name active' : 'category-name'}>
+                              All
+                          </div>
+                      :
+                      (location.pathname === '/emails') ? 
+                      <div onClick={() => selectCategoryEmails(data.category)} className={data.category === category ? 'category-name active' : 'category-name'}>
+                      {data.category}
+                    </div> 
+                      :
+                      data.category === 'All' ? (
                           <div onClick={selectAll} className={((category === null) && (type === null)) ? 'category-name active' : 'category-name'}>
                               {data.category}
                           </div>

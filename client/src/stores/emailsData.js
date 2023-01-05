@@ -21,6 +21,9 @@ const useEmailsDataStore = create(
             pageNumber : 1,
             type: null,
             contentBlock: null,
+            clear : () => {
+                set({category: null, pageNumber: 1, contentBlock:null, type: null, query: ""})
+            },
             setCategories : (data) => {
                 set({categories: data})
             },
@@ -41,6 +44,10 @@ const useEmailsDataStore = create(
             selectCategory: (data) => {
                 set({category: data})
                 set({type: null})
+                set({pageNumber: 1})
+            },
+            selectCategoryEmails: (data) => {
+                set({category: data})
                 set({pageNumber: 1})
             },
             selectContentBlock: (data) => {
@@ -69,6 +76,7 @@ const useEmailsDataStore = create(
                     localStorage.setItem("userInfo", JSON.stringify(response.data));
                     set({userInfo: response.data})
                 } catch (error) {
+                    set({error: error.response.data})
                     toast.error(error.response.data, {
                         position: "top-right",
                         autoClose: 2000,
@@ -116,34 +124,48 @@ const useEmailsDataStore = create(
 
             },
             addEmail: async (data) => {
-                set({loading: true})
-                const loaderToast = toast.loading("Adding Email...")
-                // Get current emailsData
-                const state = get()
 
-                // Create Email
-                const feedback = await ProjectFinder.post("/", data)
-                const id = feedback.data.rows[0].id;
-                
-                // Create Screenshot
-                const createPage = await ProjectFinder.get(`/screenshot/${id}`)
-                
-                // Send email
-                await ProjectFinder.post("/sendEmail", {
-                image: createPage.data.image })
+                set({success: false})
 
-                set({emails: [createPage.data.rows[0], ...state.emails], pageNumber: 1, query: '' })
-                set({loading: false})
-                toast.update(loaderToast, {render: `${data.name} have been created!`,
-                    type: 'success',
-                    isLoading: false,
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    draggable: true,
-                    progress: undefined,
-            });
+                try {    
+                    // Create Email
+                    const feedback = await ProjectFinder.post("/", data)
+                    set({loading: true})
+                    const loaderToast = toast.loading("Adding Email...")
+                    // Get current emailsData
+                    const state = get()
+                    const id = feedback.data.rows[0].id;
+                    
+                    // Create Screenshot
+                    const createPage = await ProjectFinder.get(`/screenshot/${id}`)
+                    
+                    // Send email
+                    await ProjectFinder.post("/sendEmail", {
+                    image: createPage.data.image })
+    
+                    set({emails: [createPage.data.rows[0], ...state.emails], pageNumber: 1, query: '' })
+                    set({loading: false})
+                    toast.update(loaderToast, {render: `${data.name} have been created!`,
+                        type: 'success',
+                        isLoading: false,
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                });
+                    
+                } catch (error) {
+                    toast.error(error.response.data, {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                }
             }
         }
     )

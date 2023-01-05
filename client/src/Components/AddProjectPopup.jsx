@@ -1,17 +1,18 @@
 import React, {useState, useEffect} from 'react'
-import { listOfCategories, listOfContentBlocks } from '../apis/lists';
+import { listOfCategories, listOfContentBlocks, listOfTypes } from '../apis/lists';
 import useEmailsDataStore from '../stores/emailsData';
-import { toast } from 'react-toastify'
 import loadingFile from '../apis/loading.json'
 import Lottie from 'lottie-react';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
 
 const AddProjectPopup = ({data}) => {
 
     const {show ,setShow} = data
 
     const [name, setName] = useState("");
-    const [category, setCategory] = useState("Cibc");
-    const [type, setType] = useState("Email")
+    const [category, setCategory] = useState(null);
+    const [type, setType] = useState(null)
     const [contentblock , setContentBlock] = useState("")
     const [htmlCode, setHtmlCode] = useState("");
     
@@ -20,10 +21,6 @@ const AddProjectPopup = ({data}) => {
     const loader = useEmailsDataStore((state) => state.loading)
     const selectCategory = useEmailsDataStore((state) => state.selectCategory)
     const selectType = useEmailsDataStore((state) => state.selectType)
-
-    console.log(type)
-    console.log(category)
-
     
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -32,17 +29,12 @@ const AddProjectPopup = ({data}) => {
             addEmail({
                 name,
                 html_code: htmlCode,
-                category,
-                type,
+                category: category?.value,
+                type: type?.value,
                 contentblock,
                 user_id: 3 || userInfo?.rows.id
                 
             })
-            selectCategory(null)
-            selectType(null)
-
-
-            setShow(!show)
         } catch (err) {
             console.log(err)
         }
@@ -53,51 +45,107 @@ const AddProjectPopup = ({data}) => {
       if(show === false) {
         setName("")
         setHtmlCode("")
-        setCategory("Cibc")
-        setType("Email")
+        setCategory(null)
+        setType(null)
         setContentBlock("")
       }
-    }, [show])
+      if(loader) {
+        selectCategory(null)
+        selectType(null)
+        setShow(false)
+      }
+    }, [show, loader])
     
+      const handleCategoryChange = e => {
+        setCategory(e);
+      }
+
+      const handleTypeChange = e => {
+        setType(e);
+      }
+
+      const handleContentBlockChange = e => {
+        setContentBlock(e)
+      }
+
+
+
+      const colourStyles = {
+        control: (styles) => ({ ...styles, backgroundColor: '#E0E1EA', padding: '8px' }),
+        placeholder: (styles) => ({ ...styles, color: 'black', fontSize: '1.4rem', fontWeight: '500' }),
+        option: (styles) => ({ ...styles, padding: '15px'}),
+        dropdownIndicator: base => ({
+            ...base,
+            color: "black",
+            '&:hover': {
+                color: 'black'
+            },
+          }),
+          indicatorSeparator: base => ({
+            ...base,
+            display: 'none',
+          }),
+        
+      };    
 
     return (
         <>
         {show && (
             <div className='center-box'>
-                    <form action="">
+                <div className="close-btn">
+                    <img onClick={() => setShow(!show)} src="https://i.imgur.com/7k6eDkB.png" width={'24'} alt="Close button" />
+                </div>
+                    <form action="" autoComplete='nope'>
                         <div className='input-field'>
                             <label htmlFor="Name">Name</label>
                             <input value={name} onChange={(e) => setName(e.target.value)} type="text" placeholder='Name' />
                         </div>
                         <div className='input-field'>
                             <label htmlFor="category">Category</label>
-                            <select name="category" id="category"
-                                onChange={e => setCategory(e.target.value)}>
-                                <option value="" defaultValue={'Choose category here'} disabled hidden>Choose category here</option>
-                                {listOfCategories.map(item => (
-                                  <option key={item} value={item}>{item}</option>  
-                                ))}
-                            </select>
+                            <Select
+                                placeholder="Select Category"
+                                value={category}
+                                options={listOfCategories}
+                                inputProps={{ autoComplete: 'off', autoCorrect: 'off', spellCheck: 'off' }}
+                                onChange={handleCategoryChange}
+                                styles={colourStyles}
+                                getOptionLabel={e => (
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    {e.icon}
+                                    <span style={{ marginLeft: 5 , fontSize: '1.4rem' , color: 'black', fontWeight: '500'}}>{e.text}</span>
+                                </div>
+                                )}
+                            />
                         </div>
                         <div className='input-field'>
                             <label htmlFor="type">Type</label>
-                            <select name="type" id="type"
-                                onChange={e => setType(e.target.value)}>
-                                <option value="" defaultValue={'Choose type here'} disabled hidden>Choose type here</option>
-                                  <option value="Email">Email</option>
-                                  <option value="Content Block">Content Block</option> 
-                            </select>
+                            <Select
+                                placeholder="Select Type"
+                                value={type}
+                                options={listOfTypes}
+                                onChange={handleTypeChange}
+                                styles={colourStyles}
+                                getOptionLabel={e => (
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    {e.icon}
+                                    <span style={{ marginLeft: 5 , fontSize: '1.4rem' , color: 'black', fontWeight: '500'}}>{e.text}</span>
+                                </div>
+                                )}
+                            />
                         </div>
-                        {type === 'Content Block' && (
-                            <div className='input-field'>
+                        {type?.value === 'Content Block' && (
+                        <div className='input-field'>
                             <label htmlFor="Content Block">Library</label>
-                            <select name="Content Block" id="Content Block"
-                                onChange={e => setContentBlock(e.target.value)}>
-                                <option value="" selected disabled hidden>Choose category of Content Block</option>
-                                {listOfContentBlocks.map(item => (
-                                  <option key={item} value={item}>{item}</option>  
-                                ))}
-                            </select>
+                                <Select
+                                placeholder="Select Type"
+                                value={contentblock}
+                                options={listOfContentBlocks}
+                                onChange={handleContentBlockChange}
+                                styles={colourStyles}
+                                getOptionLabel={e => (
+                                    <span style={{ marginLeft: 5 , fontSize: '1.4rem' , color: 'black', fontWeight: '500'}}>{e.text}</span>
+                                )}
+                                />
                         </div>
                         )}
                         <div className='input-field'>
