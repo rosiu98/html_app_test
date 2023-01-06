@@ -11,6 +11,25 @@
   font-family: 'Inter' , "Roboto" , sans-serif;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1d8ad5;
+}
+
+
 
 html {
   font-size: 62.5%;
