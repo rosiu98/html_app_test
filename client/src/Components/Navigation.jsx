@@ -1,11 +1,12 @@
 import React, {useRef, useEffect} from 'react'
-import { NavLink , Link } from 'react-router-dom';
+import { NavLink , Link, useLocation } from 'react-router-dom';
 import useEmailsDataStore from '../stores/emailsData';
 
 const Navigation = ({library, data}) => {
 
     const {show ,setShow} = data
 
+    const location = useLocation()
     const categories = useEmailsDataStore((state) => state.categories)
     const selectCategory = useEmailsDataStore((state) => state.selectCategory)
     const selectType = useEmailsDataStore((state) => state.selectType)
@@ -13,6 +14,7 @@ const Navigation = ({library, data}) => {
     const type = useEmailsDataStore((state) => state.type)
     const query = useEmailsDataStore((state) => state.query)
     const setQuery = useEmailsDataStore((state) => state.setQuery)
+    const selectCategoryEmails = useEmailsDataStore((state) => state.selectCategoryEmails)
     const categoriesRef = useRef(null)
     const clear = useEmailsDataStore((state) => state.clear)
 
@@ -86,9 +88,20 @@ const Navigation = ({library, data}) => {
             <div className="library-title">
                 Category :
             </div>
-            {categories.map(data => (
+            {categories?.map(data => (
                       <div key={data.category} className="library-category">
-                      {data.category === 'All' ? (
+                      {
+                      (data.category === 'All') && (location.pathname === '/emails') ? 
+                      <div onClick={() => selectCategoryEmails(null)} className={((category === null) && (type === 'Email')) ? 'category-name active' : 'category-name'}>
+                              All
+                          </div>
+                      :
+                      (location.pathname === '/emails') ? 
+                      <div onClick={() => selectCategoryEmails(data.category)} className={data.category === category ? 'category-name active' : 'category-name'}>
+                      {data.category}
+                    </div> 
+                      :
+                      data.category === 'All' ? (
                           <div onClick={selectAll} className={((category === null) && (type === null)) ? 'category-name active' : 'category-name'}>
                               {data.category}
                           </div>
@@ -103,7 +116,10 @@ const Navigation = ({library, data}) => {
                           {data.count}
                       </div>
                   </div>
-                  ))}  
+                  ))}                    
+
+
+                  
         </div>
     </div>
     }

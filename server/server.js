@@ -60,7 +60,6 @@ app.get("/api/v1/projects", async (req, res) => {
     if(fullQuery.length > 0) {
         dataQuery = fullQuery.map(data => data[1])
         // console.log(dataQuery)
-        console.log('Working!')
         fullQuery.forEach((data, index )=> {
             SelectQuery += ` ${data[0]} = $${index + 1} ${index + 1 !== fullQuery.length ? 'AND' : ''}`
         })
@@ -69,7 +68,8 @@ app.get("/api/v1/projects", async (req, res) => {
 
     // console.log(fullQuery)
 
-     const { rows } = query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%']) 
+     const { rows } = query && type ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) AND type = $2 ORDER BY id DESC;", ['%' +query + '%', type]) :
+     query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%'])
      : fullQuery.length > 0 ? await db.query(SelectQuery, dataQuery)
      : await db.query("SELECT * FROM email_table ORDER BY id DESC;")  
 

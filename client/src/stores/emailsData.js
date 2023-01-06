@@ -21,6 +21,10 @@ const useEmailsDataStore = create(
             pageNumber : 1,
             type: null,
             contentBlock: null,
+            path: '',
+            setPath: (data) => {
+                set({path: data})
+            },
             clear : () => {
                 set({category: null, pageNumber: 1, contentBlock:null, type: null, query: ""})
             },
@@ -33,9 +37,10 @@ const useEmailsDataStore = create(
 
                 set({query: data})
                 
-                if(state.query) {
+                if(state.query && (state.path === '/emails')) {
+                    set({category: null, pageNumber: 1, contentBlock:null, type: 'Email'})
+                } else if (state.query) {
                     set({category: null, pageNumber: 1, contentBlock:null, type: null})
-
                 }
             },
             setPageNumber: (data) => {

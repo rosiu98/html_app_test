@@ -20,7 +20,9 @@ const AddProjectPopup = ({data}) => {
     const userInfo = useEmailsDataStore((state) => state.userInfo)
     const loader = useEmailsDataStore((state) => state.loading)
     const selectCategory = useEmailsDataStore((state) => state.selectCategory)
+    const selectCategoryEmails = useEmailsDataStore((state) => state.selectCategoryEmails)
     const selectType = useEmailsDataStore((state) => state.selectType)
+    const path = useEmailsDataStore((state) => state.path)
     
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -46,15 +48,22 @@ const AddProjectPopup = ({data}) => {
         setName("")
         setHtmlCode("")
         setCategory(null)
-        setType(null)
+        // setType(null)
         setContentBlock("")
       }
       if(loader) {
-        selectCategory(null)
-        selectType(null)
+        if(path === '/emails') {
+            selectCategoryEmails(null)
+        } else {
+            selectCategory(null)
+        }
+        // path === '/emails' ? selectCategoryEmails(null) : selectCategory(null)
+        // selectCategory(null)
+        // (path === '/emails') && selectType(null)
+        // selectType(null)
         setShow(false)
       }
-    }, [show, loader])
+    }, [show, loader, path])
     
       const handleCategoryChange = e => {
         setCategory(e);

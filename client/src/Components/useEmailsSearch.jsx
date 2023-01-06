@@ -18,8 +18,12 @@ const useEmailsSearch = (query, pageNumber) => {
     const setCategories = useEmailsDataStore((state) => state.setCategories)
     const loader = useEmailsDataStore((state) => state.loading)
     const selectType = useEmailsDataStore((state) => state.selectType)
+    const setPath = useEmailsDataStore((state) => state.setPath)
 
     const location = useLocation()
+
+
+
 
     
     useEffect(() => {
@@ -55,8 +59,11 @@ const useEmailsSearch = (query, pageNumber) => {
     useEffect(() => {
       
     if(location.pathname === '/emails') {
+        setPath(location.pathname)
         selectType('Email')
         console.log('loading second useEffect')
+    } else {
+        setPath('')
     }
     }, [location])
     

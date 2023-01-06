@@ -6,7 +6,7 @@ import useEmailsDataStore from '../stores/emailsData'
 const EmailListV2 = ({data}) => {
 
   const {emails, hasMore, loading, error, pageNumber, setPageNumber, library} = data
-  let categories = useEmailsDataStore((state) => state.categories)
+  const categories = useEmailsDataStore((state) => state.categories)
   const category = useEmailsDataStore((state) => state.category)
   const type = useEmailsDataStore((state) => state.type)
   const loader = useEmailsDataStore((state) => state.loading)
@@ -51,7 +51,7 @@ const EmailListV2 = ({data}) => {
 
 
 
-                  {categories.map(data => (
+                  {categories?.map(data => (
                       <div key={data.category} className="library-category">
                       {
                       (data.category === 'All') && (location.pathname === '/emails') ? 
@@ -82,19 +82,16 @@ const EmailListV2 = ({data}) => {
                   ))}                    
               </div>
               {/* Render Email cards */}
-              {loader && <div className="card">
-                  <img src="https://i.imgur.com/smZLfPS.png" alt="image"/>
-                </div>}
               {emails.map((data, index) => {
               if(emails.length === index + 1) { 
                 return <div ref={lastEmailElementRef} key={data.id} className="card" onClick={() => handleProjectSelect(data.id)}>
-                  <img src={data.image} alt={data.name} />
+                  <img src={data.image || 'https://i.imgur.com/smZLfPS.png' } alt={data.name} />
                 </div>
                 
               } else {
                 return (
                 <div className="card" key={data.id} onClick={() => handleProjectSelect(data.id)}>
-                  <img src={data.image} alt={data.name}/>
+                  <img src={data.image || 'https://i.imgur.com/smZLfPS.png'} alt={data.name}/>
                 </div>
                 )
               }
