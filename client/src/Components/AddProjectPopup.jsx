@@ -13,7 +13,7 @@ const AddProjectPopup = ({data}) => {
     const [name, setName] = useState("");
     const [category, setCategory] = useState(null);
     const [type, setType] = useState(null)
-    const [contentblock , setContentBlock] = useState("")
+    const [contentblock , setContentBlock] = useState(null)
     const [htmlCode, setHtmlCode] = useState("");
     
     const addEmail = useEmailsDataStore((state) => state.addEmail)
@@ -33,7 +33,7 @@ const AddProjectPopup = ({data}) => {
                 html_code: htmlCode,
                 category: category?.value,
                 type: type?.value,
-                contentblock,
+                contentblock: contentblock?.value,
                 user_id: 3 || userInfo?.rows.id
                 
             })
@@ -49,7 +49,7 @@ const AddProjectPopup = ({data}) => {
         setHtmlCode("")
         setCategory(null)
         // setType(null)
-        setContentBlock("")
+        setContentBlock(null)
       }
       if(loader) {
         if(path === '/emails') {

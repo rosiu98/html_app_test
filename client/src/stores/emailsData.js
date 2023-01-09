@@ -47,8 +47,11 @@ const useEmailsDataStore = create(
                 set({pageNumber : data})
             },
             selectCategory: (data) => {
+
+                const state = get()
+
                 set({category: data})
-                set({type: null})
+                state.path !== '/contentblocks' && set({type: null})
                 set({pageNumber: 1})
             },
             selectCategoryEmails: (data) => {

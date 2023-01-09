@@ -68,16 +68,40 @@ app.get("/api/v1/projects", async (req, res) => {
 
     // console.log(fullQuery)
 
+    // console.log(fullQuery)
+
      const { rows } = query && type ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) AND type = $2 ORDER BY id DESC;", ['%' +query + '%', type]) :
      query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%'])
      : fullQuery.length > 0 ? await db.query(SelectQuery, dataQuery)
      : await db.query("SELECT * FROM email_table ORDER BY id DESC;")  
 
-    const count = await db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM   email_table GROUP  BY category UNION SELECT type, COUNT(*) AS Count FROM   email_table GROUP  BY type UNION SELECT 'All', COUNT(*) AS Count FROM   email_table) AS a ORDER BY a.category ASC;")
+    const count = await 
+        db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM   email_table GROUP  BY category UNION SELECT type, COUNT(*) AS Count FROM   email_table GROUP  BY type UNION SELECT 'All', COUNT(*) AS Count FROM   email_table) AS a ORDER BY a.category ASC;")
 
     let countType
     if(type) {
         countType = await db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM email_table WHERE type = 'Email' GROUP BY category UNION SELECT 'All', COUNT(*) AS Count FROM email_table WHERE type = 'Email') AS a ORDER BY a.category ASC;")
+    }
+
+
+    let countContentBlocks
+    let queryCount = "SELECT * FROM ( SELECT contentblock AS category, COUNT(*) AS Count FROM email_table WHERE"
+    if(type === 'Content Block') {
+        if(fullQuery.length > 0) {
+            const filterQuery = fullQuery.filter((data) => data[0] !== 'contentblock')
+            dataQuery = filterQuery.map(data => data[1])
+            // console.log(dataQuery)
+            filterQuery.forEach((data, index )=> {
+                queryCount += ` ${data[0]} = $${index + 1} ${index + 1 !== filterQuery.length ? 'AND' : 'GROUP BY contentblock'}`
+            })
+            queryCount += " UNION SELECT 'All', COUNT(*) AS Count FROM email_table WHERE"
+            filterQuery.forEach((data, index) => {
+                queryCount += ` ${data[0]} = $${index + 1} ${index + 1 !== filterQuery.length ? 'AND' : ''}`
+            })
+            queryCount += ') AS a ORDER BY a.category ASC;'
+        }
+        countContentBlocks = await db.query(queryCount, dataQuery)
+       
     }
 
     let hasMore = false
@@ -99,7 +123,8 @@ app.get("/api/v1/projects", async (req, res) => {
         hasMore,
         rows: results,
         count: count.rows,
-        countType: countType && countType.rows
+        countType: countType && countType.rows,
+        countContentBlocks: countContentBlocks && countContentBlocks.rows
     })
 })
 

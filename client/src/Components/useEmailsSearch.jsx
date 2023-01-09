@@ -42,7 +42,7 @@ const useEmailsSearch = (query, pageNumber) => {
 
             console.log(location.pathname)
             
-            setCategories(location.pathname === '/emails' ? res.data.countType : res.data.count)
+            setCategories(location.pathname === '/emails' ? res.data.countType : location.pathname === '/contentblocks' ? res.data.countContentBlocks : res.data.count)
             setEmails(pageNumber === 1 ? res.data.rows : [...new Set ([...emails, ...res.data.rows])]
             )
             setHasMore(res.data.hasMore)
@@ -62,7 +62,12 @@ const useEmailsSearch = (query, pageNumber) => {
         setPath(location.pathname)
         selectType('Email')
         console.log('loading second useEffect')
-    } else {
+    } else if(location.pathname === '/contentblocks') {
+        setPath(location.pathname)
+        selectType('Content Block')
+        console.log('loading contentblocks useEffect')
+    }
+     else {
         setPath('')
     }
     }, [location])

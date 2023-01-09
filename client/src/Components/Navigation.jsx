@@ -74,7 +74,7 @@ const Navigation = ({library, data}) => {
             <div className="links">
                 <NavLink onClick={() => clear()} to='/test'>All</NavLink>
                 <NavLink onClick={() => clear()} to='/emails'>Emails</NavLink>
-                <NavLink to='/login'>Code&nbsp;Snippets</NavLink>
+                <NavLink onClick={() => clear()} to='/contentblocks'>Code&nbsp;Snippets</NavLink>
             </div>
             <div className="nav-button">
                 <div onClick={showAddProject} className="add-project-button">
