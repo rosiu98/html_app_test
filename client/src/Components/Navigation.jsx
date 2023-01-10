@@ -72,7 +72,7 @@ const Navigation = ({library, data}) => {
         </div>
         <div className="navigation-desktop">
             <div className="links">
-                <NavLink onClick={() => clear()} to='/test'>All</NavLink>
+                <NavLink onClick={() => clear()} to='/'>All</NavLink>
                 <NavLink onClick={() => clear()} to='/emails'>Emails</NavLink>
                 <NavLink onClick={() => clear()} to='/contentblocks'>Code&nbsp;Snippets</NavLink>
             </div>

@@ -38,9 +38,9 @@ const useEmailsSearch = (query, pageNumber) => {
             params: { query, page: pageNumber, limit: 20, category, contentBlock, type },   
             cancelToken: new axios.CancelToken(c => cancel = c)
         }).then(res => {
-            console.log(res.data)
+            // console.log(res.data)
 
-            console.log(location.pathname)
+            // console.log(location.pathname)
             
             setCategories(location.pathname === '/emails' ? res.data.countType : location.pathname === '/contentblocks' ? res.data.countContentBlocks : res.data.count)
             setEmails(pageNumber === 1 ? res.data.rows : [...new Set ([...emails, ...res.data.rows])]

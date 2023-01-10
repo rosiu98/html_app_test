@@ -39,6 +39,9 @@ const useEmailsDataStore = create(
                 
                 if(state.query && (state.path === '/emails')) {
                     set({category: null, pageNumber: 1, contentBlock:null, type: 'Email'})
+                }
+                else if(state.query && (state.path === '/contentblocks')){
+                    set({category: null, pageNumber: 1, contentBlock:null, type: 'Content Block'})    
                 } else if (state.query) {
                     set({category: null, pageNumber: 1, contentBlock:null, type: null})
                 }

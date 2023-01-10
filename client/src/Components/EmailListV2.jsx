@@ -1,4 +1,4 @@
-import React, {useRef, useCallback, useState} from 'react'
+import React, {useRef, useCallback, useState, useEffect} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import formatter from '../apis/formatter'
 import { listOfCategories } from '../apis/lists';
@@ -9,7 +9,12 @@ const EmailListV2 = ({data}) => {
 
   const {emails, hasMore, loading, error, pageNumber, setPageNumber, library} = data
   const categories = useEmailsDataStore((state) => state.categories)
-  const [select , setSelect] = useState('')
+  const [select , setSelect] = useState({
+    value: null,
+    text: 'All',
+    icon: <img src="https://i.imgur.com/YpJNuPE.png" width='16' alt="Gatorade"
+     />
+})
   const category = useEmailsDataStore((state) => state.category)
   const contentBlock = useEmailsDataStore((state) => state.contentBlock)
   const type = useEmailsDataStore((state) => state.type)
@@ -19,6 +24,7 @@ const EmailListV2 = ({data}) => {
   const selectType = useEmailsDataStore((state) => state.selectType)
   const selectCategoryEmails = useEmailsDataStore((state) => state.selectCategoryEmails)
   const selectContentBlock = useEmailsDataStore((state) => state.selectContentBlock)
+  const query = useEmailsDataStore((state) => state.query)
   const observer = useRef()
   const lastEmailElementRef = useCallback(node => {
       if (loading) return
@@ -68,6 +74,19 @@ const EmailListV2 = ({data}) => {
       
     };  
 
+    const newObject =     [{
+      value: null,
+      text: 'All',
+      icon: <img src="https://i.imgur.com/YpJNuPE.png" width='16' alt="Gatorade"
+       />
+  }]
+    const newListOfCategories = [...newObject, ...listOfCategories,]
+
+    useEffect(() => {
+      if((location.pathname === '/contentblocks') || query) setSelect(newObject)
+    }, [location, query])
+    
+
 
     return ( 
       <section className="content">
@@ -79,7 +98,7 @@ const EmailListV2 = ({data}) => {
                             <Select
                                 placeholder="Select Category"
                                 value={select}
-                                options={listOfCategories}
+                                options={newListOfCategories}
                                 inputProps={{ autoComplete: 'off', autoCorrect: 'off', spellCheck: 'off' }}
                                 onChange={handleCategoryChange}
                                 styles={colourStyles}

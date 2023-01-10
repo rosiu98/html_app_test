@@ -77,16 +77,17 @@ const Register = () => {
                             Email App
                         </div>
                         <div className='form'>
-                            <form action="" className='form-container'>
+                            <form onSubmit={handleSubmit} className='form-container'>
                                 <input value={name} onChange={(e) => setName(e.target.value)} type="text" placeholder='Name' className="input-box" />
                                 <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email Address' required className="input-box" />
                                 <input value={password} autoComplete="true" onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' required className="input-box" />
                                 <input value={secretKey} onChange={(e) => setSecretKey(e.target.value)} type="password" placeholder='Secret Key' className="input-box" />
+                                <button type='submit' onClick={handleSubmit} className='input-button'>Register</button>
                             </form>
                         </div>
-                        <div onClick={handleSubmit} className="input-button">
+                        {/* <div onClick={handleSubmit} className="input-button">
                                 Register
-                        </div>
+                        </div> */}
                         <div className='back-link'>
                             or Login <Link to="/login">here</Link>.
                         </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState} from 'react'
 import useEmailsDataStore from '../stores/emailsData'
 import { ToastContainer } from 'react-toastify'
 
@@ -13,13 +13,11 @@ const Login = () => {
     const updateValidToken = useEmailsDataStore((state) => state.updateValidToken)
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-    
-        await addUserInfo({email, password})
-        updateValidToken(true)
-            
+            e.preventDefault()
+            await addUserInfo({email, password})
+            updateValidToken(true)
+                
        } 
-
 
   return (
     <>    <section className='grid-main'>
@@ -36,13 +34,11 @@ const Login = () => {
                         Email App
                     </div>
                     <div className='form'>
-                        <form action="" className='form-container'>
+                        <form onSubmit={handleSubmit} className='form-container'>
                             <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email Address' required className="input-box" />
                             <input value={password} autoComplete="true" onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' required className="input-box" />
+                            <button type='submit' onClick={handleSubmit} className='input-button'>Login</button>
                         </form>
-                    </div>
-                    <div onClick={handleSubmit} className="input-button">
-                            Login
                     </div>
                     <div className='back-link'>
                         or Register <Link to="/register">here</Link>.

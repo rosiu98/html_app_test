@@ -204,7 +204,6 @@ textarea {
 
 .navigation .navigation-bar .category p {
   cursor: pointer;
-
 }
 
 
@@ -361,6 +360,11 @@ textarea {
   border-radius: 5px;
 }
 
+.grid-main .container .signup .input-container button.input-button {
+  margin-top: 2rem;
+  border: 0;
+}
+
 .grid-main .container .signup .input-container .back-link {
   margin-top: 1.5rem;
   text-align: right;
@@ -454,6 +458,7 @@ textarea {
   position: sticky;
   background-color: #ffffff;
   top: 0;
+  z-index: 89;
 }
 
 .navigation-main .navigation-container {

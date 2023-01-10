@@ -54,7 +54,7 @@ function App() {
     <div className="App">
             <Routes>
                   <Route element={<ProtectedRoutes/>}> 
-                  <Route exact path="/" element={<HomePagination />} />
+                  <Route exact path="/" element={<Homev2 />} />
                   <Route path="/emails/:id" element={<EmailPage/>} />
                   <Route path="/profile" element={<Profile/>} />
                   </Route>
