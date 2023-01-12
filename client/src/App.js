@@ -10,6 +10,8 @@ import useEmailsDataStore from './stores/emailsData';
 import Profile from './Pages/Profile';
 import HomePagination from './Pages/HomePagination';
 import Homev2 from './Pages/Homev2';
+import AddProjectPopup from './Components/AddProjectPopup';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -18,6 +20,8 @@ function App() {
   const validToken = useEmailsDataStore((state) => state.validToken)
   const userInfo = useEmailsDataStore((state) => state.userInfo)
   const updateValidToken = useEmailsDataStore((state) => state.updateValidToken)
+  const show = useEmailsDataStore((state) => state.show)
+  const setShow = useEmailsDataStore((state) => state.setShow)
 
   let navigate = useNavigate()
   
@@ -66,6 +70,20 @@ function App() {
                 <Route path="/register" element={<Register/>} />
                 <Route path="*" element={<Login />} />
             </Routes>
+            <div onClick={() => setShow(!show)} className={show ? 'overlay blur' : 'overlay'}></div>
+            <AddProjectPopup data={{show, setShow}} />    
+            <ToastContainer
+                    theme='colored'
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
     </div>
   );
 }

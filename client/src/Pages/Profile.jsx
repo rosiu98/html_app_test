@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import Navigation from '../Components/Navigation';
 import useEmailsDataStore from '../stores/emailsData';
 
 const Profile = () => {
@@ -27,6 +28,8 @@ const Profile = () => {
 
 
   return (
+    <>
+    <Navigation />
     <div style={{display: 'flex' , gap: '3rem' , flexWrap: 'wrap' , justifyContent: 'center'}}>
     {userEmails.length > 0 ?  userEmails?.map(userEmails => (
         <div style={{cursor: 'pointer', maxWidth: '300px'}} key={userEmails.id} >
@@ -39,6 +42,7 @@ const Profile = () => {
         </div>
     )) : <div>Nothing here!</div>}
 </div>
+</>
   )
 }
 

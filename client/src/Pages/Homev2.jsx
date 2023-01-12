@@ -9,20 +9,14 @@ import AddProjectPopup from '../Components/AddProjectPopup'
 
 const Homev2 = () => {
 
-    const [show, setShow] = useState(false);
+    // const [show, setShow] = useState(false);
 
     const pageNumber = useEmailsDataStore((state) => state.pageNumber)
     const setPageNumber = useEmailsDataStore((state) => state.setPageNumber)
-    const deleteUserInfo = useEmailsDataStore((state) => state.deleteUserInfo)
     const categoryChange = useEmailsDataStore((state) => state.category)
     const typeChange = useEmailsDataStore((state) => state.type)
     const query = useEmailsDataStore((state) => state.query)
     
-
-    const Logout = () => {
-        deleteUserInfo()
-    }
-
     const {
         emails,
         hasMore,
@@ -40,22 +34,8 @@ const Homev2 = () => {
 
   return (
     <div className='main'>
-        <Navigation data={{show, setShow}} library={library}/>
+        <Navigation library={library}/>
         <EmailListV2 data={{emails, hasMore, loading, error, pageNumber ,setPageNumber, library}} />
-        <div onClick={() => setShow(!show)} className={show ? 'overlay blur' : 'overlay'}></div>
-        <AddProjectPopup data={{show, setShow}} />    
-        <ToastContainer
-                theme='colored'
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
     </div>
     
   )

@@ -46,11 +46,13 @@ exports.s3Uploadv2Database = async (fileName , basename) => {
 exports.s3Uploadv2Picture = async (file ,basename) => {
     const s3 = new S3()
 
+    const filter = file.mimetype.split("/").pop()
+
     const param = {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `profilImages/${basename}` + `.png`,
+        Key: `profilImages/${basename}` + `.${filter}`,
         Body: file.buffer,
-        ContentType: `image/png` 
+        ContentType: file.mimetype 
     }
     return await s3.upload(param).promise();
 }

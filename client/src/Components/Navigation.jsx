@@ -2,9 +2,7 @@ import React, {useRef, useEffect} from 'react'
 import { NavLink , Link, useLocation } from 'react-router-dom';
 import useEmailsDataStore from '../stores/emailsData';
 
-const Navigation = ({library, data}) => {
-
-    const {show ,setShow} = data
+const Navigation = ({library}) => {
 
     const location = useLocation()
     const categories = useEmailsDataStore((state) => state.categories)
@@ -17,6 +15,9 @@ const Navigation = ({library, data}) => {
     const selectCategoryEmails = useEmailsDataStore((state) => state.selectCategoryEmails)
     const categoriesRef = useRef(null)
     const clear = useEmailsDataStore((state) => state.clear)
+    const userInfo = useEmailsDataStore((state) => state.userInfo)
+    const show = useEmailsDataStore((state) => state.show)
+    const setShow = useEmailsDataStore((state) => state.setShow)
 
         const checkRef = () => {
         if(library.current) {
@@ -59,10 +60,10 @@ const Navigation = ({library, data}) => {
     <div className='navigation-container'>
         <div className="profile">
         <Link to='/profile'>
-            <img className='profile-image' src="https://i.imgur.com/qS9heKH.png" alt="" />
+            <img className='profile-image' src={userInfo.rows.user_image} alt={userInfo.rows.user_name} />
         </Link>
         </div>
-        <div className="search-bar">
+        <div className={location.pathname === '/profile' ? 'search-bar vision-hidden' : 'search-bar '}>
             <div className="search-icon">
                 <img className='search-image' src="https://i.imgur.com/3zt2moA.png" alt="" />
             </div>

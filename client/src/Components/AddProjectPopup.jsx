@@ -34,7 +34,7 @@ const AddProjectPopup = ({data}) => {
                 category: category?.value,
                 type: type?.value,
                 contentblock: contentblock?.value,
-                user_id: 3 || userInfo?.rows.id
+                user_id: userInfo?.rows.id
                 
             })
         } catch (err) {

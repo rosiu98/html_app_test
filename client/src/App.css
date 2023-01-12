@@ -52,6 +52,10 @@ body {
   display: none !important;
 }
 
+.vision-hidden {
+  visibility: hidden !important;
+}
+
 .show {
   display: block;
 }
@@ -472,6 +476,8 @@ textarea {
 .navigation-main .navigation-container .profile img {
   width: 60px;
   max-width: 60px;
+  height: 60px;
+  object-fit: cover;
   display: block;
   border: 1px solid #ABABAB;
   border-radius: 50%;

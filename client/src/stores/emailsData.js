@@ -22,6 +22,10 @@ const useEmailsDataStore = create(
             type: null,
             contentBlock: null,
             path: '',
+            show: false,
+            setShow: (data) => {
+                set({show: data})
+            },
             setPath: (data) => {
                 set({path: data})
             },
