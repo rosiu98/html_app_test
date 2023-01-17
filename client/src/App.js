@@ -56,6 +56,18 @@ function App() {
 
   return (
     <div className="App">
+                  <ToastContainer
+                    theme='colored'
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
             <Routes>
                   <Route element={<ProtectedRoutes/>}> 
                   <Route exact path="/" element={<Homev2 />} />
@@ -72,18 +84,6 @@ function App() {
             </Routes>
             <div onClick={() => setShow(!show)} className={show ? 'overlay blur' : 'overlay'}></div>
             <AddProjectPopup data={{show, setShow}} />    
-            <ToastContainer
-                    theme='colored'
-                    position="top-right"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                />
     </div>
   );
 }

@@ -58,10 +58,16 @@ const Navigation = ({library}) => {
   return (
     <nav className='navigation-main'>
     <div className='navigation-container'>
+        
+
         <div className="profile">
-        <Link to='/profile'>
-            <img className='profile-image' src={userInfo.rows.user_image} alt={userInfo.rows.user_name} />
+        {location.pathname === '/profile' ? (
+            <Link to='/'>
+            <img className='profile-image-arrow' src="https://i.imgur.com/GsvJocL.png" alt="Arrow back" />
         </Link>
+        ) : <Link to='/profile'>
+        <img className='profile-image' src={userInfo.rows.user_image} alt={userInfo.rows.user_name} />
+    </Link>}    
         </div>
         <div className={location.pathname === '/profile' ? 'search-bar vision-hidden' : 'search-bar '}>
             <div className="search-icon">

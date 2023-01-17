@@ -142,9 +142,13 @@ router.get("/profile/:id", async (req, res) => {
         const id = req.params.id
 
         const {rows} = await db.query("SELECT * FROM email_table WHERE user_id = $1", [id])
+        const countEmails = await db.query("SELECT count(id) as emailsCount from email_table where type = 'Email' AND user_id = $1", [id])
+        const countCodeSnippets = await db.query("SELECT count(id) as emailsCodeSnippets from email_table where type = 'Content Block' AND user_id = $1", [id])
 
         res.json({
-            rows
+            rows,
+            countEmails: countEmails.rows[0].emailscount,
+            countCodeSnippets: countCodeSnippets.rows[0].emailscodesnippets
         })
 
     } catch (err) {
