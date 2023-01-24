@@ -61,15 +61,15 @@ const Navigation = ({library}) => {
         
 
         <div className="profile">
-        {location.pathname === '/profile' ? (
+        {(location.pathname === '/profile' || location.pathname.includes('emails')) ? (
             <Link to='/'>
             <img className='profile-image-arrow' src="https://i.imgur.com/GsvJocL.png" alt="Arrow back" />
         </Link>
         ) : <Link to='/profile'>
-        <img className='profile-image' src={userInfo.rows.user_image} alt={userInfo.rows.user_name} />
+        <img className='profile-image' src={userInfo?.rows.user_image || ''} alt={userInfo?.rows.user_name || ''} />
     </Link>}    
         </div>
-        <div className={location.pathname === '/profile' ? 'search-bar vision-hidden' : 'search-bar '}>
+        <div className={(location.pathname === '/profile' || location.pathname.includes('emails')) ? 'search-bar vision-hidden' : 'search-bar '}>
             <div className="search-icon">
                 <img className='search-image' src="https://i.imgur.com/3zt2moA.png" alt="" />
             </div>

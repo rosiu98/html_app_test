@@ -160,7 +160,6 @@ const useEmailsDataStore = create(
                     image: createPage.data.image })
     
                     set({emails: [createPage.data.rows[0], ...state.emails], pageNumber: 1, query: '' })
-                    set({loading: false})
                     toast.update(loaderToast, {render: `${data.name} have been created!`,
                         type: 'success',
                         isLoading: false,
@@ -171,6 +170,7 @@ const useEmailsDataStore = create(
                         draggable: true,
                         progress: undefined,
                 });
+                    set({loading: false})
                     
                 } catch (error) {
                     toast.error(error.response.data, {

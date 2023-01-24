@@ -55,7 +55,7 @@ const Profile = () => {
         <div className="profile-content">
           <div className="profile-card">
             <div className="profile-image">
-              <img src="https://emailpaul-app.s3.eu-central-1.amazonaws.com/profilImages/ProfilePicture40.png" alt="Logo" />
+              <img src={userInfo.rows.user_image} alt={userInfo.rows.user_name} />
             </div>
             <div className="profile-info">
               <div className='profile-name'>{userInfo.rows.user_name}</div>
@@ -92,7 +92,7 @@ const Profile = () => {
               <img onClick={() => handleProjectSelect(userEmails.id)} src={userEmails.image || "https://i.imgur.com/smZLfPS.png" } alt={userEmails.name} />
             </div>
           </div>
-          )) : <div>Nothing here!</div>}
+          )) : <div>Nothing here yet!</div>}
         </div>
       </div>
 </>

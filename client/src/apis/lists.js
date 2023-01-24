@@ -69,3 +69,16 @@ export const listOfTypes = [
     },
 ]
 
+export const listOfView = [
+    {
+        value: 'Desktop',
+        text: `Desktop`,
+        icon: <img src="https://i.imgur.com/c4jDmGP.png" width='16' alt="Desktop" />
+    },
+    {
+        value: 'Mobile',
+        text: 'Mobile',
+        icon: <img src="https://i.imgur.com/RiXLAMx.png" width='16' alt="Mobile" />
+    },
+]
+

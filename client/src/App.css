@@ -810,6 +810,79 @@ textarea {
   cursor: pointer;
 }
 
+.emailPage-container {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 0rem 2rem 4rem 2rem;
+  display: grid;
+  grid-template-columns: 8fr 2fr;
+  gap: 3.5rem;
+  min-height: 90vh;
+  /* position: relative; */
+}
+
+.emailPage-container .emailPage-main,
+.emailPage-container .emailPage-sidemenu {
+  border-radius: 10px;
+  background-color: #F4F4F4;
+}
+
+.pagehref {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 2rem 2rem 2rem 2rem;
+  font-size: 1.6rem;
+  color: #808080;
+  position: sticky;
+  top: 90px;
+  background-color: #ffffff;
+  z-index: 1;
+}
+
+.pagehref .pagehref-text span {
+  color: #2A3990;
+  font-weight: bold;
+}
+
+.emailPage-container .emailPage-main {
+  display: flex;
+  justify-content: center;
+  align-items: top;
+  padding: 4.5rem 0;
+  position: relative;
+}
+
+.emailPage-container .emailPage-main .emailPage-main-box {
+  max-width: 700px;
+}
+
+.emailPage-container .emailPage-main .emailPage-main-view {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.emailPage-container .emailPage-sidemenu {
+  min-height: 30rem;
+  align-self: flex-start;
+  position: sticky;
+  top: 150px;
+}
+
+.emailPage-container .emailPage-sidemenu .emailPage-buttons {
+  padding: 0 1.5rem;
+}
+.emailPage-loading,
+.emailPage-loading svg {
+  height: 100% !important;
+  /* background-color: #5a5a5a; */
+  width: 100% !important;
+  transition: 4s ease-out;
+}
+
+.buttonView {
+  background-color: #2A3990;
+}
 
 
 
