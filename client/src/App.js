@@ -59,7 +59,7 @@ function App() {
             <Routes>
                   <Route element={<ProtectedRoutes/>}> 
                   <Route exact path="/" element={<Home />} />
-                  <Route path="/emails/:id" element={<EmailPagev2/>} />
+                  <Route path="/email/:id" element={<EmailPagev2/>} />
                   <Route path="/profile" element={<Profile/>} />
                   </Route>
                   
