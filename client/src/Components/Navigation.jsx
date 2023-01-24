@@ -61,7 +61,7 @@ const Navigation = ({library}) => {
         
 
         <div className="profile">
-        {(location.pathname === '/profile' || location.pathname.includes('email')) ? (
+        {(location.pathname === '/profile' || location.pathname.split('/').includes('email')) ? (
             <Link to='/'>
             <img className='profile-image-arrow' src="https://i.imgur.com/GsvJocL.png" alt="Arrow back" />
         </Link>
@@ -69,7 +69,7 @@ const Navigation = ({library}) => {
         <img className='profile-image' src={userInfo?.rows.user_image || ''} alt={userInfo?.rows.user_name || ''} />
     </Link>}    
         </div>
-        <div className={(location.pathname === '/profile' || location.pathname.includes('email')) ? 'search-bar vision-hidden' : 'search-bar '}>
+        <div className={(location.pathname === '/profile' || location.pathname.split('/').includes('email')) ? 'search-bar vision-hidden' : 'search-bar '}>
             <div className="search-icon">
                 <img className='search-image' src="https://i.imgur.com/3zt2moA.png" alt="" />
             </div>

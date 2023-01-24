@@ -40,7 +40,7 @@ const EmailListV2 = ({data}) => {
   let navigate = useNavigate()
 
   const handleProjectSelect = (id) => {
-      navigate(`/emails/${id}`)
+      navigate(`/email/${id}`)
     }
 
 
