@@ -726,6 +726,8 @@ textarea {
 
 .profile-container .profile-content .profile-card .profile-image {
   max-width: 15rem;
+  min-height: 15rem;
+  min-width: 15rem;
   width: 100%;
   background-color: #F4F4F4;
   border-radius: 50%;

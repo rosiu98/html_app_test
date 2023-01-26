@@ -164,7 +164,7 @@ const useEmailsDataStore = create(
                         type: 'success',
                         isLoading: false,
                         position: "top-right",
-                        autoClose: 5000,
+                        autoClose: 2000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         draggable: true,

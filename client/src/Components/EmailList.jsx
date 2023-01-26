@@ -4,6 +4,7 @@ import formatter from '../apis/formatter'
 import { listOfCategories } from '../apis/lists';
 import useEmailsDataStore from '../stores/emailsData'
 import Select from 'react-select';
+import { ToastContainer } from 'react-toastify';
 
 const EmailListV2 = ({data}) => {
 
@@ -176,6 +177,18 @@ const EmailListV2 = ({data}) => {
               {error && <div>Error</div>}
           </div>
       </div>
+      <ToastContainer
+                    theme='colored'
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
   </section>
     )
 

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import Navigation from '../Components/Navigation';
 import useEmailsDataStore from '../stores/emailsData';
 
@@ -9,21 +10,19 @@ const Profile = () => {
     const getEmails = useEmailsDataStore((state) => state.getEmails);
     const userEmails = useEmailsDataStore((state) => state.userEmails);
     const deleteUserInfo = useEmailsDataStore((state) => state.deleteUserInfo)
-
+    const emails = useEmailsDataStore((state) => state.emails)
 
     useEffect(() => {
         getEmails(userInfo.rows.id)
-    }, [])
+    }, [emails])
 
     useEffect(() => {
         
       window.scrollTo(0, 0)
  }, [])
 
+ console.log(emails)
 
-    // console.log(userEmails)
-
-    // console.log(userInfo)
 
     const formatter = new Intl.DateTimeFormat( 'pl', {
         day: 'numeric',
@@ -38,7 +37,7 @@ const Profile = () => {
       let navigate = useNavigate()
 
       const handleProjectSelect = (id) => {
-          navigate(`/emails/${id}`)
+          navigate(`/email/${id}`)
         }
 
         const Logout = () => {
@@ -95,6 +94,18 @@ const Profile = () => {
           )) : <div>Nothing here yet!</div>}
         </div>
       </div>
+      <ToastContainer
+                    theme='colored'
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
 </>
   )
 }
