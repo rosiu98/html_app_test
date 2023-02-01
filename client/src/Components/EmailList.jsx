@@ -4,7 +4,7 @@ import formatter from '../apis/formatter'
 import { listOfCategories } from '../apis/lists';
 import useEmailsDataStore from '../stores/emailsData'
 import Select from 'react-select';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 const EmailListV2 = ({data}) => {
 
@@ -82,6 +82,22 @@ const EmailListV2 = ({data}) => {
        />
   }]
     const newListOfCategories = [...newObject, ...listOfCategories,]
+
+    const copyHtml = (e, data) => {
+      e.stopPropagation()
+      navigator.clipboard.writeText(data)
+      toast.success('Code have been copied to clipboard.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          });
+
+  }
 
     useEffect(() => {
       if((location.pathname === '/contentblocks') || query) setSelect(newObject)
@@ -162,13 +178,34 @@ const EmailListV2 = ({data}) => {
               {emails.map((data, index) => {
               if(emails.length === index + 1) { 
                 return <div ref={lastEmailElementRef} key={data.id} className="card" onClick={() => handleProjectSelect(data.id)}>
+                  <div className='card-box'></div>
                   <img src={data.image || 'https://i.imgur.com/smZLfPS.png' } alt={data.name} />
                 </div>
                 
               } else {
                 return (
                 <div className="card" key={data.id} onClick={() => handleProjectSelect(data.id)}>
+                  <div className="card-container">
+                  <div className='card-box'>
+                    <div className="card-box-details">
+                      <span>{data.name}</span>
+                      {/* <span>{data.type === 'Content Block' ? 'Code Snippets' : 'Emails' } </span> */}
+                      { location.pathname === '/contentblocks' ?
+                      <span>{data.category} / <strong>{data.contentblock}</strong></span>
+                      :
+                      !(location.pathname === '/contentblocks' || location.pathname === '/emails') ? (
+                        <span>{data.category} / <strong>{data.type === 'Content Block' ? `Code Snippets` : 'Emails'}</strong></span>
+                      ) : 
+                      <span>{data.category}</span>
+                      }
+                    </div>
+                    <button onClick={(e) => copyHtml(e, data.html_code)} className='button'>Copy</button>
+                    
+                  </div>
+                  <div class="card-image">
                   <img src={data.image || 'https://i.imgur.com/smZLfPS.png'} alt={data.name}/>
+                  </div>
+                  </div>
                 </div>
                 )
               }

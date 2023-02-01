@@ -57,6 +57,11 @@ const EmailPage = () => {
     }
 
     const changeView = (e) => {
+
+        if(e.value === select.value) {
+            return
+        }
+
         setLoading(true)
         setSelect(e)
 
@@ -119,7 +124,7 @@ const EmailPage = () => {
         <Navigation/>
         <div className="pagehref">
             <div className="pagehref-text">
-                {data.type === 'Content Block' ? 'Code Snippets' : 'Emails'} / <span>{data.name}</span>
+                {data.type === 'Content Block' ? data.category + ' / Code Snippets' : 'Emails'} / <span>{data.name}</span>
             </div>
         </div>
         <div className="emailPage-container">

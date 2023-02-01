@@ -60,7 +60,7 @@ const Profile = () => {
               <div className='profile-name'>{userInfo.rows.user_name}</div>
               <div className='profile-count'>
                 <div>
-                  Email created <strong>: {userEmails.countEmails || 0}</strong>
+                  Emails created <strong>: {userEmails.countEmails || 0}</strong>
                 </div>
                 <div>
                   Code Snippets added <strong>: {userEmails.countCodeSnippets || 0}</strong>
