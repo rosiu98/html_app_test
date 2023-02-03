@@ -24,6 +24,7 @@ const Profile = () => {
  console.log(emails)
 
 
+
     const formatter = new Intl.DateTimeFormat( 'pl', {
         day: 'numeric',
         month: 'long',

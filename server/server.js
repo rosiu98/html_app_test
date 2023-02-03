@@ -134,6 +134,20 @@ app.post("/api/v1/projects/sendEmail", async (req, res) => {
 
     const {image} = req.body;
 
+    const { rows } = await db.query("SELECT * FROM users;")  
+
+    const users = rows.map(data => 
+        (
+            {
+            contactKey: data.id + "_" + data.user_email,
+            to: data.user_email,
+            attributes: {
+              SubscriberKey: data.id + "_" + data.user_email,
+              EmailAddress: data.user_email,
+              image: image
+            }
+            }))        
+
     const token = await axios.post("https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token", {
         grant_type: "client_credentials",
         client_id: process.env.client_id,
@@ -148,26 +162,7 @@ app.post("/api/v1/projects/sendEmail", async (req, res) => {
     await axios.post("https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.rest.marketingcloudapis.com/messaging/v1/email/messages/", {
             
         definitionKey: "AddProject_Trigger",
-        recipients: [
-          {
-            contactKey: "test1234569_pr",
-            to: "rosiu978@gmail.com",
-            attributes: {
-              SubscriberKey: "test1234569_pr",
-              EmailAddress: "rosiu978@gmail.com",
-              image: image
-            }
-          },
-          {
-            contactKey: "test123456710env_pr",
-            to: "pawel@envertadigital.com",
-            attributes: {
-              SubscriberKey: "test123456710env_pr",
-              EmailAddress: "pawel@envertadigital.com",
-              image: image
-            }
-          }
-        ],
+        recipients: users,
         attributes: {
         }
       
