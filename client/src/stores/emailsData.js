@@ -157,7 +157,9 @@ const useEmailsDataStore = create(
                     
                     // Send email
                     await ProjectFinder.post("/sendEmail", {
-                    image: createPage.data.image })
+                    image: createPage.data.image,
+                    user_id: state.userInfo.rows.id,
+                    email_name: data.name  })
     
                     set({emails: [createPage.data.rows[0], ...state.emails], pageNumber: 1, query: '' })
                     toast.update(loaderToast, {render: `${data.name} have been created!`,

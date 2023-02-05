@@ -11,7 +11,8 @@ const cron = require('node-cron')
 const fs = require('fs');
 const { template } = require("./template");
 const axios = require("axios")
-const jwtAuth = require("./routes/jwtAuth")
+const jwtAuth = require("./routes/jwtAuth");
+const { userInfo } = require("os");
 
 
 
@@ -132,9 +133,17 @@ app.get("/api/v1/projects", async (req, res) => {
 // POST Send Email
 app.post("/api/v1/projects/sendEmail", async (req, res) => {
 
-    const {image} = req.body;
+    const {image, user_id, email_name} = req.body;
 
     const { rows } = await db.query("SELECT * FROM users;")  
+
+    const userInfo = await db.query("SELECT * FROM users where id = $1", [user_id])
+
+    const count = await db.query("SELECT sum(case when type = 'Email' then 1 else 0 end) as email_count, sum(case when type = 'Content Block' then 1 else 0 end) as code_count FROM email_table;")
+
+    const {email_count, code_count} = count.rows[0]
+
+    const {user_name} = userInfo.rows[0]
 
     const users = rows.map(data => 
         (
@@ -144,7 +153,11 @@ app.post("/api/v1/projects/sendEmail", async (req, res) => {
             attributes: {
               SubscriberKey: data.id + "_" + data.user_email,
               EmailAddress: data.user_email,
-              image: image
+              image: image,
+              user_name: user_name,
+              email_name: email_name,
+              email_count: email_count,
+              code_count: code_count
             }
             }))        
 
