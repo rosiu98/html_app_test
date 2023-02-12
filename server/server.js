@@ -6,13 +6,12 @@ const cors = require("cors");
 const puppeteer = require("puppeteer");
 const path = require('path')
 const { fs:fsmemfs } = require('memfs')
-const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database, s3Uploadv2Picture } = require("./s3Service");
+const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database, s3Uploadv2Picture, s3Delete } = require("./s3Service");
 const cron = require('node-cron')
 const fs = require('fs');
 const { template } = require("./template");
 const axios = require("axios")
 const jwtAuth = require("./routes/jwtAuth");
-const { userInfo } = require("os");
 
 
 
@@ -263,13 +262,18 @@ app.put("/api/v1/projects/:id", async (req, res) => {
     })
 })
 
-// DELETE a Restaurant
+// DELETE a Project
 app.delete("/api/v1/projects/:id", async (req, res) => {
-    // console.log(req.params)
-    try {
     const id = req.params.id;
+    console.log(req.params)
+
+    try {
+         const results = await s3Delete(Number(id))
          await db.query("DELETE FROM email_table WHERE id = $1", [id]);
-         res.status(200).send(`Email Template deleted with ID: ${id}`)
+         res.status(200).json({
+            status: `Email Template deleted with ID: ${id}`,
+            results
+        })
     } catch (error) {
         console.log(error)
     }

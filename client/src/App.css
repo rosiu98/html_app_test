@@ -499,11 +499,16 @@ textarea {
   display: flex;
   align-items: center;
   padding: 1rem;
-  background-color: #F4F4F4;
+  background-color: #f4f4f4;
   border-radius: 10px;
   border: 1px solid #ABABAB;
   max-width: 47.5rem;
   margin: 0 5rem 0 2.5rem;
+}
+
+.navigation-main .navigation-container .search-bar:focus-within {
+  border: 1px solid #f4f4f4;
+  outline: 2px solid #2A3990;
 }
 
 .navigation-main .navigation-container .search-bar .search-icon {
@@ -518,7 +523,7 @@ textarea {
 
 .navigation-main .navigation-container .search-bar .search-area input {
   outline: none;
-  background-color: #F4F4F4;
+  background-color: #f4f4f4;
   color: #000;
   border: 0;
   width: 100%;
@@ -548,6 +553,26 @@ textarea {
     text-decoration: none;
     position: relative;
 }
+
+.navigation-main .navigation-container .navigation-desktop .links a:hover {
+  color: rgb(49, 49, 49) !important;
+}
+
+.navigation-main .navigation-container .navigation-desktop .links a:hover::before {
+  position: absolute;
+  content: '';
+  width: 35px;
+  height: 3px;
+  background-color: #bbbbbb;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  bottom: -34px;
+  right: 50%;
+  transform: translate(50%, 50%);
+
+}
+
+
 
 .navigation-main .navigation-container .navigation-desktop .links a.active {
     color: #000;
@@ -803,7 +828,7 @@ textarea {
   width: 100%;
   display: block;
   height: 15rem;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: 50%;
   border: 4px solid white;
 }
@@ -952,6 +977,9 @@ textarea {
   background-color: #2A3990;
 }
 
+.red {
+  background-color: #9C254D;
+}
 
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import ProjectFinder from '../apis/ProjectFinder'
 import IframeResizer from 'iframe-resizer-react'
 import template from '../apis/template'
@@ -15,6 +15,8 @@ const EmailPage = () => {
 
 
     const { id } = useParams()
+
+    const navigate = useNavigate()
 
     const [data, setData] = useState({})
     const [width, setWidth] = useState(700)
@@ -85,6 +87,21 @@ const EmailPage = () => {
             theme: "light",
             });
 
+    }
+
+    const deleteProject = async () => {
+        await ProjectFinder.delete(`/${id}`)
+        toast.success(`${data.name} have been deleted from database.`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
+        navigate('/')
     }
 
     let html
@@ -182,7 +199,8 @@ const EmailPage = () => {
             <div className="emailPage-sidemenu">
                 <div className="emailPage-buttons">
                     <button onClick={copyHtml} className='button'>Copy</button>
-                    <button className='button buttonView' onClick={showValue}>{value ? 'View Code' : 'View Design' }</button>           
+                    <button className='button buttonView' onClick={showValue}>{value ? 'View Code' : 'View Design' }</button>
+                    <button onClick={deleteProject} className='button red'>Delete</button>           
                 </div>          
             </div>
         </div>
