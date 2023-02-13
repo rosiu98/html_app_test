@@ -746,7 +746,28 @@ textarea {
   height: 500px;
   object-fit: contain;
   object-position: top;
-  
+}
+
+.content-container .cards-container .card .card-container .card-details-icon {
+  position: absolute;
+  display: none;
+  color: #fff;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 1.1rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.content-container .cards-container .card .card-container .card-details-icon img {
+  width: 36px;
+  height: auto;
+  object-fit: unset;
+}
+
+.content-container .cards-container .card .card-container:hover .card-details-icon {
+  display: block;
 }
 
 .categories-container {
@@ -949,6 +970,11 @@ textarea {
   max-width: 700px;
 }
 
+.emailPage-container .emailPage-main .emailPage-main-box iframe {
+  margin: 0 auto;  
+}
+
+
 .emailPage-container .emailPage-main .emailPage-main-view {
   position: absolute;
   top: 0;
@@ -980,6 +1006,20 @@ textarea {
 .red {
   background-color: #9C254D;
 }
+
+.green {
+  background-color: green;
+}
+
+/* .cm-content {
+  width: 700px !important;
+  height: 75vh !important;
+  overflow: scroll !important;
+  font-size: 1.2rem !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+} */
 
 
 

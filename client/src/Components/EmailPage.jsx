@@ -14,6 +14,7 @@ const EmailPage = () => {
     const [data, setData] = useState({})
     const [width, setWidth] = useState(700)
     const [value, setValue] = useState(true)
+    const [code, setCode] = useState("a = 0");
 
 
 
@@ -76,7 +77,6 @@ const EmailPage = () => {
       language={"html"}
       showLineNumbers={false}
       codeBlock={true}
-    //   startingLineNumber={1}
       theme={dracula}
       customStyle={{
         width: '700px',

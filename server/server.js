@@ -248,17 +248,29 @@ app.post("/api/v1/projects", async (req, res) => {
 // const file = fs.readFileSync(path.join(__dirname + '/views/html_13.html'))
 // console.log(file)
 
-// UPDATE a Restaurant
+// UPDATE a Project
 app.put("/api/v1/projects/:id", async (req, res) => {
 
     const id = req.params.id
-    const {name , html_code , category} = req.body
+    const { html_code, type } = req.body
 
-    const {rows} = await db.query("UPDATE email_table SET name = $1 , html_code = $2, category = $3 WHERE id = $4 returning *", [name, html_code, category, id])
+    // await s3Delete(Number(id))
+    // await db.query("DELETE FROM email_table WHERE id = $1", [id]);
+    const {rows} = await db.query("UPDATE email_table SET html_code = $1  WHERE id = $2 returning *", [html_code, id])
+
+    const pathFile = `/html_${id}.html`
+    const basename = `html_${id}.html`
+
+    if (type === "Content Block") {
+        html_code = template.replace("%%Content_Block%%", html_code)
+    }
+    fsmemfs.writeFileSync(pathFile, html_code)
+    const result = await s3Uploadv2(pathFile ,basename)
 
     res.status(200).json({
         status: "success",
-        rows
+        rows,
+        result
     })
 })
 

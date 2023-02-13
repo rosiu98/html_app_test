@@ -3,13 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import ProjectFinder from '../apis/ProjectFinder'
 import IframeResizer from 'iframe-resizer-react'
 import template from '../apis/template'
-import { CodeBlock, dracula } from "react-code-blocks";
+// import { CodeBlock, dracula } from "react-code-blocks";
 import Navigation from '../Components/Navigation'
 import { listOfView } from '../apis/lists'
 import Select from 'react-select';
 import Lottie from "lottie-react"
 import loaderAnimation from '../apis/skeleton-loader.json'
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import CodeMirror from "@uiw/react-codemirror"
+import { dracula } from '@uiw/codemirror-theme-dracula';
+import { html as codeMirrorHtml } from "@codemirror/lang-html"
 
 const EmailPage = () => {
 
@@ -28,6 +31,7 @@ const EmailPage = () => {
         icon: <img src="https://i.imgur.com/c4jDmGP.png" width='16' alt="Desktop"
          />
     })
+    const [code, setCode] = useState("a = 0");
 
     const onResized = data =>  data && setLoading(false)
 
@@ -37,6 +41,7 @@ const EmailPage = () => {
             try {
                 const response = await ProjectFinder.get(`/${id}`)
                 setData(response.data.rows)
+                setCode(response.data.rows.html_code)
             } catch (err) {
                 console.log(err)
             }
@@ -49,6 +54,8 @@ const EmailPage = () => {
         
         window.scrollTo(0, 0)
    }, [value, select])
+
+
 
     const showValue = () => {
         setValue(!value)
@@ -104,6 +111,25 @@ const EmailPage = () => {
         navigate('/')
     }
 
+    const updateProject = async () => {
+        const loaderToast = toast.loading("Updating Code...")
+        await ProjectFinder.put(`/${id}` , {
+            html_code: code,
+            type: data.type
+        })
+        await ProjectFinder.get(`/screenshot/${id}`)
+        toast.update(loaderToast, {render: `Code have been updated!`,
+                        type: 'success',
+                        isLoading: false,
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                });
+    }
+
     let html
 
     if(Object.keys(data).length > 0) {
@@ -134,7 +160,7 @@ const EmailPage = () => {
         
       };
 
-      console.log(loading)
+    //   console.log(loading)
 
     return (
         <>
@@ -146,7 +172,7 @@ const EmailPage = () => {
         </div>
         <div className="emailPage-container">
             <div className="emailPage-main">
-                <div className="emailPage-main-box">
+                <div className='emailPage-main-box'>
                     {value ? <>
                         {loading && <div className='emailPage-loading'><Lottie rendererSettings={'preserveAspectRatio'} animationData={loaderAnimation} loop={true}  /></div>}
                        <IframeResizer
@@ -176,22 +202,30 @@ const EmailPage = () => {
                               )}
                             />  
                         </div>    
-                    </> : <CodeBlock
-                            text={data.html_code}
-                            language={"html"}
-                            showLineNumbers={false}
-                            codeBlock={true}
-                            //   startingLineNumber={1}
-                            theme={dracula}
-                            customStyle={{
-                                width: '700px',
-                                height: '75vh',
-                                overflow: 'scroll',
-                                fontSize: '12px',
-                                whiteSpace: 'pre-wrap',
-                                wordWrap: 'break-word',
-                                overflowWrap: 'anywhere'
-                            }}
+                    </> : 
+                    // <CodeBlock
+                    //         text={data.html_code}
+                    //         language={"html"}
+                    //         showLineNumbers={false}
+                    //         codeBlock={true}
+                    //         theme={dracula}
+                    //         customStyle={{
+                    //             width: '700px',
+                    //             height: '75vh',
+                    //             overflow: 'scroll',
+                    //             fontSize: '12px',
+                    //             whiteSpace: 'pre-wrap',
+                    //             wordWrap: 'break-word',
+                    //             overflowWrap: 'anywhere'
+                    //         }}
+
+                    <CodeMirror
+                    value={code}
+                    theme={dracula}
+                    extensions={[codeMirrorHtml()]}
+                    onChange={(editor, change) => {
+                        setCode(editor)
+                    }}
                             /> 
                     }
                 </div>
@@ -200,11 +234,23 @@ const EmailPage = () => {
                 <div className="emailPage-buttons">
                     <button onClick={copyHtml} className='button'>Copy</button>
                     <button className='button buttonView' onClick={showValue}>{value ? 'View Code' : 'View Design' }</button>
-                    <button onClick={deleteProject} className='button red'>Delete</button>           
+                    <button onClick={deleteProject} className='button red'>Delete</button>
+                    {!value && <button onClick={updateProject} className='button green'>Update Code</button> }           
                 </div>          
             </div>
         </div>
-
+        <ToastContainer
+                theme='colored'
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />           
         
         </>
     )

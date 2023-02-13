@@ -171,7 +171,7 @@ const useEmailsDataStore = create(
                         closeOnClick: true,
                         draggable: true,
                         progress: undefined,
-                });
+                    });
                     set({loading: false})
                     
                 } catch (error) {

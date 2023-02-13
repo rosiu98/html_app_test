@@ -25,11 +25,11 @@ const Navigation = ({library}) => {
             entries.forEach(entry => {
                 // console.log(entry);
                 if(!entry.isIntersecting) {
-                    categoriesRef.current.className = 'categories'
+                    categoriesRef.current && (categoriesRef.current.className = 'categories')
                     // console.log('I cannot see it')
                 } else {
                     // console.log('I can see it')
-                    categoriesRef.current.className = 'categories hide'
+                    categoriesRef.current && ( categoriesRef.current.className = 'categories hide')
                 }
             })
         })
