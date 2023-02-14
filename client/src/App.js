@@ -1,6 +1,5 @@
 import './App.css';
 import {Route, Routes, useNavigate} from 'react-router-dom'
-import EmailPage from './Components/EmailPage';
 import EmailPagev2 from './Pages/EmailPagev2';
 import Login from './Pages/Login';
 import ProtectedRoutes from './apis/ProtectedRoutes';

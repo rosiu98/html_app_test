@@ -6,7 +6,7 @@ const cors = require("cors");
 const puppeteer = require("puppeteer");
 const path = require('path')
 const { fs:fsmemfs } = require('memfs')
-const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database, s3Uploadv2Picture, s3Delete } = require("./s3Service");
+const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database, s3Uploadv2Picture, s3Delete, s3DeletePhoto, s3Find } = require("./s3Service");
 const cron = require('node-cron')
 const fs = require('fs');
 const { template } = require("./template");
@@ -158,7 +158,9 @@ app.post("/api/v1/projects/sendEmail", async (req, res) => {
               email_count: email_count,
               code_count: code_count
             }
-            }))        
+            }
+        )
+    )        
 
     const token = await axios.post("https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token", {
         grant_type: "client_credentials",
@@ -251,11 +253,11 @@ app.post("/api/v1/projects", async (req, res) => {
 // UPDATE a Project
 app.put("/api/v1/projects/:id", async (req, res) => {
 
-    const id = req.params.id
+    const photoName = req.params.id;
+    const id = photoName.split("_")[1]
     const { html_code, type } = req.body
 
-    // await s3Delete(Number(id))
-    // await db.query("DELETE FROM email_table WHERE id = $1", [id]);
+    await s3DeletePhoto(photoName)
     const {rows} = await db.query("UPDATE email_table SET html_code = $1  WHERE id = $2 returning *", [html_code, id])
 
     const pathFile = `/html_${id}.html`
@@ -276,14 +278,31 @@ app.put("/api/v1/projects/:id", async (req, res) => {
 
 // DELETE a Project
 app.delete("/api/v1/projects/:id", async (req, res) => {
-    const id = req.params.id;
-    console.log(req.params)
+    const photoName = req.params.id;
+    const id = photoName.split("_")[1]
 
     try {
-         const results = await s3Delete(Number(id))
+         const results = await s3Delete(id, photoName)
          await db.query("DELETE FROM email_table WHERE id = $1", [id]);
          res.status(200).json({
             status: `Email Template deleted with ID: ${id}`,
+            results
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// Test Project
+app.get("/api/v1/test/", async (req, res) => {
+    // const id = req.params.id;
+    // console.log(req.params)
+
+    try {
+        const results = await s3Find('views/images/screenshot')
+        console.log(results)
+         res.status(200).json({
+            status: `Success`,
             results
         })
     } catch (error) {
@@ -308,6 +327,15 @@ app.get('/views/images/:filename', (req, res) => {
 app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
     const id = req.params.id;
     const url = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/html_${id}.html`
+
+    const d = new Date();
+    const mm = d.getMonth() + 1;
+    const dd = d.getDate();
+    const yy = d.getFullYear();
+    const min = d.getMinutes();
+    const sec = d.getSeconds();
+    const timestamp = "" + yy + mm + dd + min + sec
+
     const browser = await puppeteer.launch({
         defaultViewport: null,
     });
@@ -318,10 +346,10 @@ app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
     // })
     await page.goto(url);
     // const pageHeight = await page.evaluate(() => { window.innerHeight; })
-    const pathFile = path.join(__dirname + `/views/images/screenshot${id}.png`)
+    // const pathFile = path.join(__dirname + `/views/images/screenshot${id}.png`)
     // const basename = path.basename(__dirname + `/views/images/screenshot${id}.png`)
-    const basename = `screenshot${id}.png`
-    const image = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/images/screenshot${id}.png`
+    const basename = `screenshot_${id + '_' + timestamp}.png`
+    const image = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/images/screenshot_${id + '_' + timestamp}.png`
     // const screenshot = await page.screenshot({fullPage: true});
     const body = await page.$('body');
     const bounding_box = await body.boundingBox();

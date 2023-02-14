@@ -78,9 +78,11 @@ const EmailListV2 = ({data}) => {
     const newObject =     [{
       value: null,
       text: 'All',
-      icon: <img src="https://i.imgur.com/YpJNuPE.png" width='16' alt="Gatorade"
+      icon: <img src="https://i.imgur.com/YpJNuPE.png" width='16' alt="All"
        />
   }]
+
+  const now = Math.random()
     const newListOfCategories = [...newObject, ...listOfCategories,]
 
     const copyHtml = (e, data) => {
@@ -176,6 +178,8 @@ const EmailListV2 = ({data}) => {
               </div>
               {/* Render Email cards */}
               {emails.map((data, index) => {
+                // const image = data.image ? `${data.image}?${now}` : null
+                const image = data.image
               if(emails.length === index + 1) { 
                 return <div ref={lastEmailElementRef} key={data.id} className="card" onClick={() => handleProjectSelect(data.id)}>
                   <div className="card-container">
@@ -195,7 +199,7 @@ const EmailListV2 = ({data}) => {
                     
                   </div>
                   <div className="card-image">
-                  <img src={data.image || 'https://i.imgur.com/smZLfPS.png'} alt={data.name}/>
+                  <img src={image || 'https://i.imgur.com/smZLfPS.png'} alt={data.name}/>
                   </div>
                   <div className="card-details-icon">
                     <img src="https://i.imgur.com/9joR86R.png" width={36} alt="View details icon" title='View more' />
@@ -224,7 +228,7 @@ const EmailListV2 = ({data}) => {
                     
                   </div>
                   <div className="card-image">
-                  <img src={data.image || 'https://i.imgur.com/smZLfPS.png'} alt={data.name}/>
+                  <img src={image|| `https://i.imgur.com/smZLfPS.png`} alt={data.name}/>
                   </div>
                   <div className="card-details-icon">
                     <img src="https://i.imgur.com/9joR86R.png" width={36} alt="View details icon" title='View more' />

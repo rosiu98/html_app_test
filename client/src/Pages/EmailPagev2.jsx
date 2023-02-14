@@ -97,7 +97,8 @@ const EmailPage = () => {
     }
 
     const deleteProject = async () => {
-        await ProjectFinder.delete(`/${id}`)
+        const index = String(data.image).split("/").at(-1)
+        await ProjectFinder.delete(`/${index}`)
         toast.success(`${data.name} have been deleted from database.`, {
             position: "top-right",
             autoClose: 5000,
@@ -112,8 +113,9 @@ const EmailPage = () => {
     }
 
     const updateProject = async () => {
+        const index = String(data.image).split("/").at(-1)
         const loaderToast = toast.loading("Updating Code...")
-        await ProjectFinder.put(`/${id}` , {
+        await ProjectFinder.put(`/${index}` , {
             html_code: code,
             type: data.type
         })

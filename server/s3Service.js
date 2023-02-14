@@ -17,7 +17,7 @@ exports.s3Uploadv2 = async (fileName , basename) => {
     return await s3.upload(param).promise();
 }
 
-exports.s3Delete = async (id) => {
+exports.s3Delete = async (id, photoName) => {
     const s3 = new S3()
 
     // const filter = basename.split(".").pop()
@@ -26,13 +26,41 @@ exports.s3Delete = async (id) => {
         Bucket: process.env.AWS_BUCKET_NAME,
         Delete: {
             Objects: [
-                { Key: `views/images/screenshot${id}.png`},
+                { Key: `views/images/${photoName}`},
                 { Key: `views/html_${id}.html`},
             ]
         },
     }
     return await s3.deleteObjects(param).promise();
 }
+
+exports.s3DeletePhoto = async (photoName) => {
+    const s3 = new S3()
+
+    // const filter = basename.split(".").pop()
+
+    const param = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `views/images/${photoName}`
+    }
+    return await s3.deleteObject(param).promise();
+}
+
+
+exports.s3Find = async (prefix) => {
+    const s3 = new S3()
+
+    // const filter = basename.split(".").pop()
+
+    const param = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Prefix: prefix
+    }
+    return await s3.listObjectsV2(param).promise();
+}
+
+
+
 
 // exports.s3Delete = async (id) => {
 //     const s3 = new S3()
