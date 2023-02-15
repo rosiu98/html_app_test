@@ -630,7 +630,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  padding-bottom: 1rem;
   cursor: pointer;
 }
 
