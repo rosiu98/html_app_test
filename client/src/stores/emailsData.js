@@ -135,7 +135,6 @@ const useEmailsDataStore = create(
             getEmails: async (id) => {
 
                 const response = await AuthApi.get(`/profile/${id}`)
-                console.log(response.data)
                 set({userEmails: response.data})
 
             },

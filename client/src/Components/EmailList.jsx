@@ -231,7 +231,7 @@ const EmailListV2 = ({data}) => {
                   <img src={image|| `https://i.imgur.com/smZLfPS.png`} alt={data.name}/>
                   </div>
                   <div className="card-details-icon">
-                    <img src="https://i.imgur.com/9joR86R.png" width={36} alt="View details icon" title='View more' />
+                    <img src="https://i.imgur.com/9joR86R.png" width={40} alt="View details icon" title='View more' />
                     <p>View more</p>
                   </div>
                   </div>

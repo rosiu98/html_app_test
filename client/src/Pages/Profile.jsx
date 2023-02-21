@@ -21,17 +21,13 @@ const Profile = () => {
       window.scrollTo(0, 0)
  }, [])
 
- console.log(emails)
 
 
 
-    const formatter = new Intl.DateTimeFormat( 'pl', {
+    const formatter = new Intl.DateTimeFormat( 'en', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: false,
       } );
 
 
@@ -84,12 +80,20 @@ const Profile = () => {
         <div className="library-content">
         {userEmails.rows?.length > 0 ?  userEmails.rows?.map(userEmails => (
           <div key={userEmails.id} className="library-project">
-            <p>{userEmails.name}</p>
-            <p>{userEmails.category}</p>
-            <p>{formatter.format(Date.parse(userEmails.created_at))}</p>
-            <p>{userEmails.type}</p>
+            <div className='library-project-text'>
+            <p><strong>Name:</strong> {userEmails.name}</p>
+            <p><strong>Category:</strong> {userEmails.category}</p>
+            <p><strong>Created at:</strong> {formatter.format(Date.parse(userEmails.created_at))}</p>
+            <p><strong>Type:</strong> {userEmails.type}</p>
+            </div>
+            <div onClick={() => handleProjectSelect(userEmails.id)}>
             <div className="library-project-image">
-              <img onClick={() => handleProjectSelect(userEmails.id)} src={userEmails.image || "https://i.imgur.com/smZLfPS.png" } alt={userEmails.name} />
+              <img src={userEmails.image || "https://i.imgur.com/smZLfPS.png" } alt={userEmails.name} />
+            </div>
+            <div className="library-project-icon">
+                    <img src="https://i.imgur.com/9joR86R.png" width={40} alt="View details icon" title='View more' />
+                    <p>View more</p>
+            </div>
             </div>
           </div>
           )) : <div>Nothing here yet!</div>}

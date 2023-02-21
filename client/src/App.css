@@ -145,7 +145,28 @@ select {
   font-size: 16px;
   cursor: pointer;
   border-radius: 8px;
+  transition: 200ms ease-out;
 }
+
+.emailPage-buttons .button:hover {
+  background-color: #000000d8;
+}
+.button.flex:hover {
+  background-color: #000000d8;
+}
+
+.button.buttonView:hover {
+  background-color: #2a3990d8;
+}
+
+.button.red:hover {
+  background-color: #9C254Dd8;
+}
+
+.button.green:hover {
+  background-color: rgba(0, 128, 0, 0.76);
+}
+
 
 .button-loading {
   display: flex;
@@ -598,7 +619,13 @@ textarea {
   padding: 1.5rem 4.5rem;
   border-radius: 10px;
   cursor: pointer;
+  transition: 200ms ease-out;
 }
+
+.navigation-main .navigation-container .navigation-desktop .nav-button .add-project-button:hover {
+  background-color: #000000d8;
+}
+
 
 .content-container {
   max-width: 1340px;
@@ -880,6 +907,7 @@ textarea {
   border-top: 2px solid #D9D9D9;
   font-size: 1.8rem;
   color: #808080;
+  padding: 0 2rem 6rem 2rem;
 }
 
 .library-container .library-title {
@@ -897,17 +925,59 @@ textarea {
   /* flex-wrap: wrap; */
   gap: 3rem;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+  align-items: baseline;
 }
 
 .library-container .library-content .library-project {
   cursor: pointer;
   max-width: 30rem;
+  border: 1px solid rgba(94, 103, 123, 0.1);
+  position: relative;
 }
+
+.library-container .library-content .library-project .library-project-text {
+  font-size: 1.4rem;
+  color: #000;
+  margin: 2rem;
+  border-bottom: 1px solid black;
+  padding-bottom: 1rem;
+  cursor: initial;
+}
+
+.library-container .library-content .library-project .library-project-text p {
+  margin-bottom: 1rem;
+}
+
+.library-container .library-content .library-project .library-project-icon {
+  position: absolute;
+  display: none;
+  color: #fff;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 1.1rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+.library-container .library-content .library-project:hover .library-project-icon {
+  display: block;
+}
+
 
 .library-container .library-content .library-project .library-project-image img {
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
+
 }
+
+.library-container .library-content .library-project:hover .library-project-image {
+  filter: brightness(0.6);
+  transition: filter 200ms ease-out 0s;
+  background-color: #f2f3f2;
+}
+
 
 
 .profile-logout .add-project-button {
@@ -918,6 +988,11 @@ textarea {
   padding: 1.5rem 4.5rem;
   border-radius: 10px;
   cursor: pointer;
+  transition: 200ms ease-out all;
+}
+
+.profile-logout .add-project-button:hover {
+  background-color: #000000d8;
 }
 
 .emailPage-container {
@@ -927,7 +1002,7 @@ textarea {
   display: grid;
   grid-template-columns: 8fr 2fr;
   gap: 3.5rem;
-  min-height: 90vh;
+  min-height: 83vh;
   /* position: relative; */
 }
 
@@ -1016,6 +1091,16 @@ textarea {
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
 } */
+
+.cm-editor {
+  width: 700px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.goBack {
+  cursor: pointer;
+}
 
 
 

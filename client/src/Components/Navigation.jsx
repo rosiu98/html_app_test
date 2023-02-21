@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react'
-import { NavLink , Link, useLocation } from 'react-router-dom';
+import { NavLink , Link, useLocation, useNavigate } from 'react-router-dom';
 import useEmailsDataStore from '../stores/emailsData';
 
 const Navigation = ({library}) => {
@@ -37,6 +37,8 @@ const Navigation = ({library}) => {
         observer.observe(library.current)
     }}
 
+    const navigate = useNavigate()
+
     const handleSearch = (e) => {
         setQuery(e.target.value.trim())
     }
@@ -55,6 +57,10 @@ const Navigation = ({library}) => {
         if(library) checkRef()
     },[])
 
+    const goBack = () => {
+		navigate(-1);
+	}
+
   return (
     <nav className='navigation-main'>
     <div className='navigation-container'>
@@ -62,9 +68,9 @@ const Navigation = ({library}) => {
 
         <div className="profile">
         {(location.pathname === '/profile' || location.pathname.split('/').includes('email')) ? (
-            <Link to='/'>
+            <a className='goBack' onClick={goBack}>
             <img className='profile-image-arrow' src="https://i.imgur.com/GsvJocL.png" alt="Arrow back" />
-        </Link>
+        </a>
         ) : <Link to='/profile'>
         <img className='profile-image' src={userInfo?.rows.user_image || ''} alt={userInfo?.rows.user_name || ''} />
     </Link>}    
