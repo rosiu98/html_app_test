@@ -255,7 +255,8 @@ app.put("/api/v1/projects/:id", async (req, res) => {
 
     const photoName = req.params.id;
     const id = photoName.split("_")[1]
-    const { html_code, type } = req.body
+    const { type } = req.body
+    let { html_code } = req.body
 
     await s3DeletePhoto(photoName)
     const {rows} = await db.query("UPDATE email_table SET html_code = $1  WHERE id = $2 returning *", [html_code, id])

@@ -1,21 +1,23 @@
-// export const listOfCategories = ['Cibc', 'MountainDew', 'TastyRewards', 'Gatorade']
-
 export const listOfContentBlocks = [
     {
-        value: 'PreHeader',
-        text: 'PreHeader',
+        value: 'Preheader',
+        text: 'Preheader',
     },
     {
         value: 'Logo',
         text: 'Logo',
     },
     {
-        value: 'TwoColumnHeader',
-        text: 'TwoColumnHeader',
+        value: 'Header',
+        text: 'Header',
     },
     {
         value: 'Body',
         text: 'Body',
+    },
+    {
+        value: 'Columns',
+        text: 'Columns',
     },
     {
         value: 'OneCta',
@@ -23,12 +25,12 @@ export const listOfContentBlocks = [
     },
     {
         value: 'Rating',
-        text: 'OneCta',
+        text: 'Rating',
     },
     {
-        value: 'Legal',
-        text: 'Legal',
-    },
+        value: 'Footer',
+        text: 'Footer',
+    }
 ]
 
 
