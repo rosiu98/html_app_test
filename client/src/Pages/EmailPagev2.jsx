@@ -171,6 +171,10 @@ const EmailPage = () => {
             <div className="pagehref-text">
                 {data.type === 'Content Block' ? data.category + ' / Code Snippets' : 'Emails'} / <span>{data.name}</span>
             </div>
+            <div className="count-page">
+                <img src="https://i.imgur.com/OkJyeVG.png" width={24} height={24} alt="View icon" />&nbsp;
+                {data.count} Views
+            </div>
         </div>
         <div className="emailPage-container">
             <div className="emailPage-main">

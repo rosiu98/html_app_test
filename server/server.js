@@ -192,7 +192,7 @@ app.post("/api/v1/projects/sendEmail", async (req, res) => {
     })
 })
 
-// GET idividual Restaurant
+// GET idividual project
 app.get("/api/v1/projects/:id", async (req, res) => {
 
     const id = req.params.id
@@ -200,10 +200,28 @@ app.get("/api/v1/projects/:id", async (req, res) => {
     try {
     const projects = await db.query("SELECT * FROM email_table WHERE id = $1;", [id])
 
-    res.status(200).json({
-        status: "success",
-        rows: projects.rows[0]
-    })
+    const nowDate = new Date()
+    const updatedDate = new Date(projects.rows[0].updated_at)
+    const diffTime = Math.ceil(Math.abs(nowDate - updatedDate) / 1000)
+
+
+    if(diffTime > 15) {
+        const count = Number(projects.rows[0].count) + 1
+        console.log("View Count = " + count)
+        const updatedCount = await db.query("UPDATE email_table SET count = $1  WHERE id = $2 returning *", [count, id])
+
+        res.status(200).json({
+            status: "success",
+            rows: updatedCount.rows[0]
+        })
+    } else {
+        res.status(200).json({
+            status: "success",
+            rows: projects.rows[0]
+        }) 
+    }
+    
+    
 } catch (err) {
     console.log(err)
 }

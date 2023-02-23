@@ -24,9 +24,9 @@ const Profile = () => {
 
 
 
-    const formatter = new Intl.DateTimeFormat( 'en', {
+    const formatter = new Intl.DateTimeFormat( 'uk', {
         day: 'numeric',
-        month: 'long',
+        month: 'numeric',
         year: 'numeric',
       } );
 
