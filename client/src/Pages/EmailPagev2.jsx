@@ -13,6 +13,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import CodeMirror from "@uiw/react-codemirror"
 import { dracula } from '@uiw/codemirror-theme-dracula';
 import { html as codeMirrorHtml } from "@codemirror/lang-html"
+import useEmailsDataStore from '../stores/emailsData'
 
 const EmailPage = () => {
 
@@ -20,7 +21,7 @@ const EmailPage = () => {
     const { id } = useParams()
 
     const navigate = useNavigate()
-
+    const userInfo = useEmailsDataStore((state) => state.userInfo)
     const [data, setData] = useState({})
     const [width, setWidth] = useState(700)
     const [value, setValue] = useState(true)
@@ -32,6 +33,8 @@ const EmailPage = () => {
          />
     })
     const [code, setCode] = useState("a = 0");
+    const [user, setUser] = useState({})
+    const [updater, setUpdater] = useState(false)
 
     const onResized = data =>  data && setLoading(false)
 
@@ -42,6 +45,9 @@ const EmailPage = () => {
                 const response = await ProjectFinder.get(`/${id}`)
                 setData(response.data.rows)
                 setCode(response.data.rows.html_code)
+                setUser(response.data.user)
+                setUpdater(response.data.updated_user)
+                console.log(response.data)
             } catch (err) {
                 console.log(err)
             }
@@ -117,7 +123,8 @@ const EmailPage = () => {
         const loaderToast = toast.loading("Updating Code...")
         await ProjectFinder.put(`/${index}` , {
             html_code: code,
-            type: data.type
+            type: data.type,
+            user_id: userInfo.rows.id
         })
         await ProjectFinder.get(`/screenshot/${id}`)
         toast.update(loaderToast, {render: `Code have been updated!`,
@@ -130,6 +137,7 @@ const EmailPage = () => {
                         draggable: true,
                         progress: undefined,
                 });
+        setUpdater(userInfo.rows)
     }
 
     let html
@@ -162,7 +170,11 @@ const EmailPage = () => {
         
       };
 
-    //   console.log(loading)
+      const formatter = new Intl.DateTimeFormat( 'uk', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+      } );
 
     return (
         <>
@@ -173,7 +185,7 @@ const EmailPage = () => {
             </div>
             <div className="count-page">
                 <img src="https://i.imgur.com/OkJyeVG.png" width={24} height={24} alt="View icon" />&nbsp;
-                {data.count} Views
+                {Number(data.count) === 0 ? Number(data.count) + 1 : data.count} Views
             </div>
         </div>
         <div className="emailPage-container">
@@ -236,6 +248,7 @@ const EmailPage = () => {
                     }
                 </div>
             </div>
+            <div>
             <div className="emailPage-sidemenu">
                 <div className="emailPage-buttons">
                     <button onClick={copyHtml} className='button'>Copy</button>
@@ -243,6 +256,27 @@ const EmailPage = () => {
                     <button onClick={deleteProject} className='button red'>Delete</button>
                     {!value && <button onClick={updateProject} className='button green'>Update Code</button> }           
                 </div>          
+            </div>
+            {user && (
+                <div className="user_info">
+                    <div className="user_created">
+                        <span>Created by:</span>
+                        <img src={user.user_image} alt={user.user_name} />
+                        <strong>{user.user_name}<br/>
+                        <span style={{fontWeight: 'normal'}}>{data.created_at && formatter.format(Date.parse(data.created_at))}</span>
+                        </strong>
+                    </div>
+                    {updater && (
+                       <div className="user_created">
+                       <span>Updated by:</span>
+                       <img src={updater.user_image} alt={updater.user_name} />
+                       <strong>{updater.user_name}<br/>
+                       <span style={{fontWeight: 'normal'}}>{formatter.format(Date.parse(data.update_code === "0" ? new Date() : data.update_code))}</span>
+                       </strong>
+                   </div> 
+                    )}
+                </div>
+            )}
             </div>
         </div>
         <ToastContainer

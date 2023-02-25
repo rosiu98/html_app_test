@@ -1111,7 +1111,32 @@ textarea {
   cursor: pointer;
 }
 
+.user_info {
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid rgba(94, 103, 123, 0.1);
+  margin-top: 2rem;
+  border-radius: 10px;
+}
 
+.user_created {
+  font-size: 1.2rem;
+  color: #808080;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+
+.user_created img {
+  width: 25px;
+  height: 25px;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
 
 
 

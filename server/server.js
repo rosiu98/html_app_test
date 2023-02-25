@@ -196,14 +196,18 @@ app.post("/api/v1/projects/sendEmail", async (req, res) => {
 app.get("/api/v1/projects/:id", async (req, res) => {
 
     const id = req.params.id
+    let updater_user
     
     try {
     const projects = await db.query("SELECT * FROM email_table WHERE id = $1;", [id])
+    const user = await db.query("SELECT * FROM users where id = $1;", [projects.rows[0].user_id])
+    if(projects.rows[0].update_id !== null) {
+        updater_user = await db.query("SELECT * FROM users where id = $1", [projects.rows[0].update_id])
+    }
 
     const nowDate = new Date()
     const updatedDate = new Date(projects.rows[0].updated_at)
     const diffTime = Math.ceil(Math.abs(nowDate - updatedDate) / 1000)
-
 
     if(diffTime > 15) {
         const count = Number(projects.rows[0].count) + 1
@@ -212,12 +216,16 @@ app.get("/api/v1/projects/:id", async (req, res) => {
 
         res.status(200).json({
             status: "success",
-            rows: updatedCount.rows[0]
+            rows: updatedCount.rows[0],
+            user: user.rows[0],
+            updater_user: updater_user?.rows[0] || false
         })
     } else {
         res.status(200).json({
             status: "success",
-            rows: projects.rows[0]
+            rows: projects.rows[0],
+            user: user.rows[0],
+            updated_user: updater_user?.rows[0] || false
         }) 
     }
     
@@ -273,11 +281,11 @@ app.put("/api/v1/projects/:id", async (req, res) => {
 
     const photoName = req.params.id;
     const id = photoName.split("_")[1]
-    const { type } = req.body
+    const { type, user_id } = req.body
     let { html_code } = req.body
 
     await s3DeletePhoto(photoName)
-    const {rows} = await db.query("UPDATE email_table SET html_code = $1  WHERE id = $2 returning *", [html_code, id])
+    const {rows} = await db.query("UPDATE email_table SET html_code = $1 , update_code = $2, update_id = $3 WHERE id = $4 returning *", [html_code, new Date(), user_id, id])
 
     const pathFile = `/html_${id}.html`
     const basename = `html_${id}.html`
