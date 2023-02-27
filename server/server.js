@@ -218,7 +218,7 @@ app.get("/api/v1/projects/:id", async (req, res) => {
             status: "success",
             rows: updatedCount.rows[0],
             user: user.rows[0],
-            updater_user: updater_user?.rows[0] || false
+            updated_user: updater_user?.rows[0] || false
         })
     } else {
         res.status(200).json({
