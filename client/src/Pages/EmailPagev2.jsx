@@ -27,7 +27,7 @@ const EmailPage = () => {
     const [value, setValue] = useState(true)
     const [loading, setLoading] = useState(true)
     const [select , setSelect] = useState({
-        value: null,
+        value: "Desktop",
         text: 'Desktop',
         icon: <img src="https://i.imgur.com/c4jDmGP.png" width='16' alt="Desktop"
          />
@@ -47,7 +47,7 @@ const EmailPage = () => {
                 setCode(response.data.rows.html_code)
                 setUser(response.data.user)
                 setUpdater(response.data.updated_user)
-                console.log(response.data)
+                // console.log(response.data.rows)
             } catch (err) {
                 console.log(err)
             }
@@ -67,9 +67,6 @@ const EmailPage = () => {
         setValue(!value)
     }
  
-    const changeWidth = () => {
-        width === 700 ? setWidth(400) : setWidth(700);
-    }
 
     const changeView = (e) => {
 
@@ -137,7 +134,11 @@ const EmailPage = () => {
                         draggable: true,
                         progress: undefined,
                 });
+        const data2 = {...data}
+        data2.update_code = new Date()
+        setData(data2)
         setUpdater(userInfo.rows)
+        // setData([...data , data.update_code: Date.now()])
     }
 
     let html
