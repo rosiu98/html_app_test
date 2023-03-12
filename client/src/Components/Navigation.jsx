@@ -90,7 +90,7 @@ const Navigation = ({library}) => {
                 <NavLink onClick={() => clear()} to='/contentblocks'>Code&nbsp;Snippets</NavLink>
             </div>
             <div className="nav-button">
-                <div onClick={showAddProject} className="add-project-button">
+                <div onClick={showAddProject} className="add-project-button mbl-hide">
                     Add&nbsp;Project
                 </div>
             </div>
@@ -99,7 +99,7 @@ const Navigation = ({library}) => {
     {library && <div className="categories-container">
         <div ref={categoriesRef} className="categories hide">
             <div className="library-title">
-                Category :
+                Category&nbsp;:
             </div>
             {categories?.map(data => (
                       <div key={data.category} className="library-category">

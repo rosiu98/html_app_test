@@ -178,7 +178,7 @@ const EmailPage = () => {
       } );
 
     return (
-        <>
+        <div className='emPage'>
         <Navigation/>
         <div className="pagehref">
             <div className="pagehref-text">
@@ -293,7 +293,7 @@ const EmailPage = () => {
                 pauseOnHover
             />           
         
-        </>
+        </div>
     )
 }
 

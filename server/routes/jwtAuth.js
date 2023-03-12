@@ -23,7 +23,7 @@ const upload = multer({ storage, fileFilter })
 
 router.post('/register', upload.single('image'), validInfo, async (req, res) => {
     try {
-        const secretKeyServer = 'enverta'
+        const secretKeyServer = process.env.REGISTER_CODE
         //1. destructure the req.fields(name, email, password)
 
         const {name, email , password, secretKey} = req.body

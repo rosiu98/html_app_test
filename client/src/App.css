@@ -488,6 +488,7 @@ textarea {
   align-items: center;
   border-bottom: 1px solid #D9D9D9;
   padding: 1.5rem 0rem;
+  flex-wrap: wrap;
   min-height: 9rem;
 }
 
@@ -501,6 +502,10 @@ textarea {
   border-radius: 50%;
 }
 
+.navigation-main .navigation-container .profile:not(.profile-image-arrow) img:hover {
+  outline: 2px solid #2A3990;
+}
+
 .navigation-main .navigation-container .profile .profile-image-arrow {
   width: 35px;
   max-width: 35px;
@@ -509,6 +514,7 @@ textarea {
   display: block;
   border: none;
   border-radius:0%;
+  outline: none !important;
 }
 
 .navigation-main .navigation-container .search-bar {
@@ -554,6 +560,13 @@ textarea {
   justify-content: space-between;
 
 }
+
+@media screen and (max-width: 600px) { 
+  .navigation-main .navigation-container .navigation-desktop {
+    justify-content: center;
+  }
+}
+
 
 .navigation-main .navigation-container .navigation-desktop .links {
   display: flex;
@@ -608,8 +621,42 @@ textarea {
     bottom: -34px;
     right: 50%;
     transform: translate(50%, 50%);
-
 }
+
+@media screen and (max-width: 600px) { 
+  .navigation-main .navigation-container {
+    gap: 2rem;
+  }
+
+  .navigation-main .navigation-container .navigation-desktop .links a.active::before {
+    position: absolute;
+    content: '';
+    width: 35px;
+    height: 3px;
+    background-color: #9C254D;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    bottom: -15px;
+    right: 50%;
+    transform: translate(50%, 50%);
+  }
+
+  .navigation-main .navigation-container .navigation-desktop {
+    flex: 100%;
+  }
+
+  .navigation-main .navigation-container .navigation-desktop .links {
+    margin: 0;
+    gap: 4rem;
+    font-size: 1.3rem;
+  }
+
+  .navigation-main .navigation-container .search-bar {
+    margin: 0;
+    margin-left: 2rem;
+  }
+}
+
 
 .navigation-main .navigation-container .navigation-desktop .nav-button .add-project-button {
   font-weight: 500;
@@ -624,6 +671,12 @@ textarea {
 
 .navigation-main .navigation-container .navigation-desktop .nav-button .add-project-button:hover {
   background-color: #000000d8;
+}
+
+@media screen and (max-width: 900px) { 
+  .add-project-button.mbl-hide {
+    display: none;
+  }
 }
 
 
@@ -692,6 +745,20 @@ textarea {
   display: grid;
   gap: 3.5rem;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+@media screen and (max-width: 1000px) { 
+  .content-container .cards-container {
+    gap: 2.5rem;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 600px) { 
+  .content-container .cards-container {
+    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .content-container .cards-container .card {
@@ -797,6 +864,14 @@ textarea {
   height: 6rem;
   max-width: 1340px;
   padding: 1rem 2rem;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 1200px) { 
+  .categories-container {
+    padding: 1rem 0rem;
+  }
+
 }
 
 .categories-container .categories {
@@ -810,7 +885,9 @@ textarea {
   color: #ffffff;
   font-size: 1.2rem;
   gap: 1.5rem;
+  overflow: auto;
 }
+
 
 .categories-container .categories .library-title {
   margin-right: 0.5rem;
@@ -836,9 +913,10 @@ textarea {
 
 
 .profile-container {
-  max-width: 1300px;
+  max-width: 1340px;
   width: 100%;
   margin: 0 auto;
+  padding: 0 2rem;
   margin-top: 4rem;
 }
 
@@ -895,6 +973,48 @@ textarea {
   gap: 5rem;
 }
 
+@media screen and (max-width: 1000px) { 
+  .profile-container .profile-content .profile-card .profile-info .profile-count{
+    flex-direction: column;
+    align-items: baseline;
+    gap: 2rem;
+  }
+
+  .profile-container .profile-content .profile-card {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: -8.5rem;
+    margin-left: 3rem;
+    gap: 4.5rem;
+  }
+}
+
+@media screen and (max-width: 600px) { 
+
+  .profile-container .profile-content .profile-card {
+    align-items: center;
+  }
+
+  .profile-container .profile-content {
+    justify-content: center;
+  }
+
+  .profile-container .profile-content .profile-card {
+    margin-left: 0;
+  }
+
+  .profile-container .profile-content .profile-card {
+    flex-direction: column;
+  }
+
+  .profile-container .profile-content {
+    height: 40rem;
+  }
+
+
+}
+
+
 .profile-container .profile-content .profile-card .profile-info .profile-count strong{
   color: #000;
   font-weight: 600;
@@ -926,6 +1046,25 @@ textarea {
   gap: 3rem;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   align-items: baseline;
+}
+
+@media screen and (max-width: 1000px) { 
+  .library-container .library-content {
+    grid-template-columns: 1fr 1fr;
+    place-items: center;
+  }
+
+  .library-container .library-content .library-project {
+    max-width: 100% !important;
+  }
+
+}
+
+@media screen and (max-width: 600px) { 
+  .library-container .library-content {
+    grid-template-columns: 1fr;
+  }
+
 }
 
 .library-container .library-content .library-project {
@@ -995,8 +1134,13 @@ textarea {
   background-color: #000000d8;
 }
 
+.emPage {
+  width: 1340px;
+  margin: 0 auto;
+}
+
 .emailPage-container {
-  max-width: 1340px;
+  width: 1340px;
   margin: 0 auto;
   padding: 0rem 2rem 4rem 2rem;
   display: grid;
@@ -1013,7 +1157,7 @@ textarea {
 }
 
 .pagehref {
-  max-width: 1340px;
+  width: 1340px;
   margin: 0 auto;
   padding: 2rem 2rem 2rem 2rem;
   font-size: 1.6rem;
@@ -1078,7 +1222,6 @@ textarea {
   width: 100% !important;
   transition: 4s ease-out;
 }
-
 .buttonView {
   background-color: #2A3990;
 }
