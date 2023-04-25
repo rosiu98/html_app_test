@@ -13,7 +13,7 @@ const EmailListV2 = ({data}) => {
   const [select , setSelect] = useState({
     value: null,
     text: 'All',
-    icon: <img src="https://i.imgur.com/YpJNuPE.png" width='16' alt="Gatorade"
+    icon: <img src="https://i.imgur.com/YpJNuPE.png" width='16' alt="All"
      />
 })
   const category = useEmailsDataStore((state) => state.category)

@@ -143,14 +143,15 @@ const EmailPage = () => {
 
     let html
 
-    if(Object.keys(data).length > 0) {
-        if (data?.type === "Content Block") {
-            html = template.replace("%%Content_Block%%", data.html_code )
-            html = html.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
-        } else {
-            html = data.html_code.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
-        } 
-    }
+        if(Object.keys(data).length > 0) {
+            if (data?.type === "Content Block") {
+                html = template.replace("%%Content_Block%%", data.html_code )
+                html = html.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
+            } else {
+                html = data.html_code.replace("<head>", '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>')
+            } 
+        }
+    
 
     const colourStyles = {
         control: (styles) => ({ ...styles, backgroundColor: '#F2F3F2', padding: '5px', border: '1px solid black' }),
