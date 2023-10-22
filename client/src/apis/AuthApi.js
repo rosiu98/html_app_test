@@ -4,7 +4,7 @@ import axios from "axios";
 // NODE_ENV = 'production'
 
 const baseURL = process.env.NODE_ENV === 'production' ? 
-"/api/v1" :  
+"https://html-app-backend.vercel.app/api/v1" :  
 "http://localhost:3001/api/v1"
 
 
