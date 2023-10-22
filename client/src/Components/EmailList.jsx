@@ -177,7 +177,7 @@ const EmailListV2 = ({data}) => {
               </div>
               </div>
               {/* Render Email cards */}
-              {emails.map((data, index) => {
+              {emails?.map((data, index) => {
                 // const image = data.image ? `${data.image}?${now}` : null
                 const image = data.image
               if(emails.length === index + 1) { 
