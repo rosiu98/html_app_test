@@ -33,7 +33,7 @@ const useEmailsSearch = (query, pageNumber) => {
         axios({
             method: 'GET',
             url: process.env.NODE_ENV === 'production' ? 
-            "https://html-app-backend.vercel.app/api/v1/projects" :  
+            "https://html-app-backend.onrender.com/api/v1/projects" :  
             "http://localhost:3001/api/v1/projects",
             params: { query, page: pageNumber, limit: 20, category, contentBlock, type },   
             cancelToken: new axios.CancelToken(c => cancel = c)
