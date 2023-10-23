@@ -364,13 +364,13 @@ app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
     const sec = d.getSeconds();
     const timestamp = "" + yy + mm + dd + min + sec
 
-    // const browser = await puppeteer.launch({
-    //     defaultViewport: null,
-    // });
+    const browser = await puppeteer.launch({
+        defaultViewport: null,
+    });
 
-    const browser = await puppeteer.connect({
-        browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`
-    })
+    // const browser = await puppeteer.connect({
+    //     browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`
+    // })
 
 
     const page = await browser.newPage();
