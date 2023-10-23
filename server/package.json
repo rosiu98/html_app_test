@@ -28,6 +28,7 @@
         "nodemon": "^2.0.19",
         "pg": "^8.7.3",
         "puppeteer": "^16.2.0",
+        "puppeteer-core": "^21.4.0",
         "ssh2-sftp-client": "^9.0.4"
     }
 }

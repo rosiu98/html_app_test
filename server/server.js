@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const express = require("express");
 const cors = require("cors");
 const puppeteer = require("puppeteer");
+const puppeteerCore = require("puppeteer-core")
 const path = require('path')
 const { fs:fsmemfs } = require('memfs')
 const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database, s3Uploadv2Picture, s3Delete, s3DeletePhoto, s3Find } = require("./s3Service");
@@ -363,9 +364,15 @@ app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
     const sec = d.getSeconds();
     const timestamp = "" + yy + mm + dd + min + sec
 
-    const browser = await puppeteer.launch({
-        defaultViewport: null,
-    });
+    // const browser = await puppeteer.launch({
+    //     defaultViewport: null,
+    // });
+
+    const browser = await puppeteer.connect({
+        browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`
+    })
+
+
     const page = await browser.newPage();
     // await page.setViewport({
     //     width:700,
