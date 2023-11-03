@@ -1,6 +1,7 @@
 const { S3 } = require("aws-sdk");
 const { fs } = require("memfs");
 const fileSystem = require("fs");
+const path = require("path");
 
 exports.s3Uploadv2 = async (fileName, basename) => {
   const s3 = new S3();
@@ -173,4 +174,51 @@ exports.saveLocalScreenshot = async (file, basename) => {
       }
     });
   });
+};
+
+exports.deleteLocalFiles = (id, photoName) => {
+  const screenshotFileName = photoName; // Use the provided photoName for the screenshot filename
+  const htmlFileName = `html_${id}.html`; // Adjust the HTML filename format
+
+  // Define the file paths for the local files
+  const screenshotFilePath = path.join(
+    __dirname,
+    "views/images",
+    screenshotFileName
+  );
+  const htmlFilePath = path.join(__dirname, "views/html", htmlFileName);
+
+  try {
+    // Delete the local files
+    fileSystem.unlinkSync(screenshotFilePath);
+    fileSystem.unlinkSync(htmlFilePath);
+
+    // Return a success message
+    return "Local files deleted successfully";
+  } catch (error) {
+    console.error(error);
+    return "Failed to delete local files";
+  }
+};
+
+exports.deleteLocalScreenshot = (photoName) => {
+  const screenshotFileName = photoName; // Use the provided photoName for the screenshot filename
+
+  // Define the file paths for the local files
+  const screenshotFilePath = path.join(
+    __dirname,
+    "views/images",
+    screenshotFileName
+  );
+
+  try {
+    // Delete the local files
+    fileSystem.unlinkSync(screenshotFilePath);
+
+    // Return a success message
+    return "Local Screenshot deleted successfully";
+  } catch (error) {
+    console.error(error);
+    return "Failed to delete local screenshot";
+  }
 };

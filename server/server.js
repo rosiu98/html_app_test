@@ -8,15 +8,10 @@ const puppeteerCore = require("puppeteer-core");
 const path = require("path");
 const { fs: fsmemfs } = require("memfs");
 const {
-  s3Uploadv2,
-  s3Uploadv2Screenshot,
-  s3Uploadv2Database,
-  s3Uploadv2Picture,
-  s3Delete,
-  s3DeletePhoto,
-  s3Find,
   saveLocalHtml,
   saveLocalScreenshot,
+  deleteLocalFiles,
+  deleteLocalScreenshot,
 } = require("./s3Service");
 const cron = require("node-cron");
 const fs = require("fs");
@@ -68,7 +63,6 @@ app.get("/api/v1/projects", async (req, res) => {
   // Creating Dynamic SQL query
   if (fullQuery.length > 0) {
     dataQuery = fullQuery.map((data) => data[1]);
-    // console.log(dataQuery)
     fullQuery.forEach((data, index) => {
       SelectQuery += ` ${data[0]} = $${index + 1} ${
         index + 1 !== fullQuery.length ? "AND" : ""
@@ -76,10 +70,6 @@ app.get("/api/v1/projects", async (req, res) => {
     });
     SelectQuery += "ORDER BY id DESC;";
   }
-
-  // console.log(fullQuery)
-
-  // console.log(fullQuery)
 
   const { rows } =
     query && type
@@ -116,7 +106,6 @@ app.get("/api/v1/projects", async (req, res) => {
         (data) => data[0] !== "contentblock"
       );
       dataQuery = filterQuery.map((data) => data[1]);
-      // console.log(dataQuery)
       filterQuery.forEach((data, index) => {
         queryCount += ` ${data[0]} = $${index + 1} ${
           index + 1 !== filterQuery.length ? "AND" : "GROUP BY contentblock"
@@ -250,7 +239,6 @@ app.get("/api/v1/projects/:id", async (req, res) => {
 
     if (diffTime > 15) {
       const count = Number(projects.rows[0].count) + 1;
-      console.log("View Count = " + count);
       const updatedCount = await db.query(
         "UPDATE email_table SET count = $1  WHERE id = $2 returning *",
         [count, id]
@@ -303,8 +291,6 @@ app.post("/api/v1/projects", async (req, res) => {
 
   const result = await saveLocalHtml(html_code, basename);
 
-  console.log(result);
-
   res.status(201).json({
     status: "success",
     result,
@@ -326,20 +312,22 @@ app.put("/api/v1/projects/:id", async (req, res) => {
   const { type, user_id } = req.body;
   let { html_code } = req.body;
 
-  await s3DeletePhoto(photoName);
+  deleteLocalScreenshot(photoName);
   const { rows } = await db.query(
     "UPDATE email_table SET html_code = $1 , update_code = $2, update_id = $3 WHERE id = $4 returning *",
     [html_code, new Date(), user_id, id]
   );
 
-  const pathFile = `/html_${id}.html`;
+  //   const pathFile = `/html_${id}.html`;
   const basename = `html_${id}.html`;
 
   if (type === "Content Block") {
     html_code = template.replace("%%Content_Block%%", html_code);
   }
-  fsmemfs.writeFileSync(pathFile, html_code);
-  const result = await s3Uploadv2(pathFile, basename);
+  //   fsmemfs.writeFileSync(pathFile, html_code);
+  //   const result = await s3Uploadv2(pathFile, basename);
+
+  const result = await saveLocalHtml(html_code, basename);
 
   res.status(200).json({
     status: "success",
@@ -354,7 +342,8 @@ app.delete("/api/v1/projects/:id", async (req, res) => {
   const id = photoName.split("_")[1];
 
   try {
-    const results = await s3Delete(id, photoName);
+    // const results = await s3Delete(id, photoName);
+    const results = deleteLocalFiles(id, photoName);
     await db.query("DELETE FROM email_table WHERE id = $1", [id]);
     res.status(200).json({
       status: `Email Template deleted with ID: ${id}`,
@@ -365,44 +354,18 @@ app.delete("/api/v1/projects/:id", async (req, res) => {
   }
 });
 
-// Test Project
-app.get("/api/v1/test/", async (req, res) => {
-  // const id = req.params.id;
-  // console.log(req.params)
-
-  try {
-    const results = await s3Find("views/images/screenshot");
-    console.log(results);
-    res.status(200).json({
-      status: `Success`,
-      results,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-app.get("/views/:filename", (req, res) => {
-  const filename = req.params.filename;
-  console.log(filename);
-  res.sendFile(path.join(__dirname + `/views/${filename}`));
-});
-
 app.get("/views/html/:filename", (req, res) => {
   const filename = req.params.filename;
-  console.log(filename);
   res.sendFile(path.join(__dirname + `/views/html/${filename}`));
 });
 
 app.get("/views/images/:filename", (req, res) => {
   const filename = req.params.filename;
-  console.log(filename);
   res.sendFile(path.join(__dirname + `/views/images/${filename}`));
 });
 
 app.get("/views/profilImages/:filename", (req, res) => {
   const filename = req.params.filename;
-  console.log(filename);
   res.sendFile(path.join(__dirname + `/views/profilImages/${filename}`));
 });
 
@@ -450,7 +413,6 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
       height: bounding_box.height,
     },
   });
-  console.log(screenshot);
   const { rows } = await db.query(
     "UPDATE email_table SET image = $1 WHERE id = $2 returning *",
     [image, id]
