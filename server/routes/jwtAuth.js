@@ -4,7 +4,7 @@ const router = require("express").Router();
 const jwtGenerator = require("../utils/jwtGenerator");
 const validInfo = require("../middleware/validinfo");
 const authorization = require("../middleware/authorization");
-const { s3Uploadv2Picture, saveLocalPicture } = require("../s3Service");
+const { saveLocalPicture } = require("../s3Service");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();

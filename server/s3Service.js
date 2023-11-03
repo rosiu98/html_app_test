@@ -123,10 +123,49 @@ exports.saveLocalPicture = async (file, basename) => {
     baseURL = process.env.PRODUCTION_BASE_URL; // Use production base URL in production environment
   }
 
-  const fullURL = `${baseURL}/views${filePath}`;
-
   return new Promise((resolve, reject) => {
     fileSystem.writeFile(filePath, file.buffer, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ Location: `${baseURL}/${filePath}` });
+      }
+    });
+  });
+};
+
+exports.saveLocalHtml = async (htmlCode, basename) => {
+  const filePath = `views/html/${basename}`; // Specify the file path
+
+  let baseURL = process.env.DEVELOPMENT_BASE_URL; // Default to development base URL http://localhost:3001
+
+  if (process.env.NODE_ENV === "production") {
+    baseURL = process.env.PRODUCTION_BASE_URL; // Use production base URL in the production environment
+  }
+
+  return new Promise((resolve, reject) => {
+    // Write the HTML code to the file
+    fileSystem.writeFile(filePath, htmlCode, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ Location: `${baseURL}/${filePath}` });
+      }
+    });
+  });
+};
+
+exports.saveLocalScreenshot = async (file, basename) => {
+  const filePath = `views/images/${basename}`;
+
+  let baseURL = process.env.DEVELOPMENT_BASE_URL; // Default to development base URL http://localhost:3001
+
+  if (process.env.NODE_ENV === "production") {
+    baseURL = process.env.PRODUCTION_BASE_URL; // Use production base URL in production environment
+  }
+
+  return new Promise((resolve, reject) => {
+    fileSystem.writeFile(filePath, file, (err) => {
       if (err) {
         reject(err);
       } else {

@@ -15,6 +15,8 @@ const {
   s3Delete,
   s3DeletePhoto,
   s3Find,
+  saveLocalHtml,
+  saveLocalScreenshot,
 } = require("./s3Service");
 const cron = require("node-cron");
 const fs = require("fs");
@@ -156,65 +158,67 @@ app.get("/api/v1/projects", async (req, res) => {
 
 // POST Send Email
 app.post("/api/v1/projects/sendEmail", async (req, res) => {
-  const { image, user_id, email_name } = req.body;
+  if (process.env.NODE_ENV === "production") {
+    const { image, user_id, email_name } = req.body;
 
-  const { rows } = await db.query("SELECT * FROM users;");
+    const { rows } = await db.query("SELECT * FROM users;");
 
-  const userInfo = await db.query("SELECT * FROM users where id = $1", [
-    user_id,
-  ]);
+    const userInfo = await db.query("SELECT * FROM users where id = $1", [
+      user_id,
+    ]);
 
-  const count = await db.query(
-    "SELECT sum(case when type = 'Email' then 1 else 0 end) as email_count, sum(case when type = 'Content Block' then 1 else 0 end) as code_count FROM email_table;"
-  );
+    const count = await db.query(
+      "SELECT sum(case when type = 'Email' then 1 else 0 end) as email_count, sum(case when type = 'Content Block' then 1 else 0 end) as code_count FROM email_table;"
+    );
 
-  const { email_count, code_count } = count.rows[0];
+    const { email_count, code_count } = count.rows[0];
 
-  const { user_name } = userInfo.rows[0];
+    const { user_name } = userInfo.rows[0];
 
-  const users = rows.map((data) => ({
-    contactKey: data.id + "_" + data.user_email,
-    to: data.user_email,
-    attributes: {
-      SubscriberKey: data.id + "_" + data.user_email,
-      EmailAddress: data.user_email,
-      image: image,
-      user_name: user_name,
-      email_name: email_name,
-      email_count: email_count,
-      code_count: code_count,
-    },
-  }));
-
-  const token = await axios.post(
-    "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token",
-    {
-      grant_type: "client_credentials",
-      client_id: process.env.client_id,
-      client_secret: process.env.client_secret,
-      account_id: process.env.account_id,
-    },
-    {
-      headers: {
-        "content-type": "application/json",
+    const users = rows.map((data) => ({
+      contactKey: data.id + "_" + data.user_email,
+      to: data.user_email,
+      attributes: {
+        SubscriberKey: data.id + "_" + data.user_email,
+        EmailAddress: data.user_email,
+        image: image,
+        user_name: user_name,
+        email_name: email_name,
+        email_count: email_count,
+        code_count: code_count,
       },
-    }
-  );
+    }));
 
-  await axios.post(
-    "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.rest.marketingcloudapis.com/messaging/v1/email/messages/",
-    {
-      definitionKey: "AddProject_Trigger",
-      recipients: users,
-      attributes: {},
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token.data.access_token}`,
-        "content-type": "application/json",
+    const token = await axios.post(
+      "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token",
+      {
+        grant_type: "client_credentials",
+        client_id: process.env.client_id,
+        client_secret: process.env.client_secret,
+        account_id: process.env.account_id,
       },
-    }
-  );
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
+
+    await axios.post(
+      "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.rest.marketingcloudapis.com/messaging/v1/email/messages/",
+      {
+        definitionKey: "AddProject_Trigger",
+        recipients: users,
+        attributes: {},
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token.data.access_token}`,
+          "content-type": "application/json",
+        },
+      }
+    );
+  }
 
   res.status(200).json({
     status: "success",
@@ -288,14 +292,18 @@ app.post("/api/v1/projects", async (req, res) => {
     "INSERT INTO email_table (name, html_code, category, type, contentblock, user_id) VALUES ($1 , $2, $3, $4, $5, $6) returning * ",
     [name, html_code, category, type, contentblock, user_id]
   );
-  const pathFile = `/html_${rows[0].id}.html`;
+  //   const pathFile = `/html_${rows[0].id}.html`;
   const basename = `html_${rows[0].id}.html`;
 
   if (type === "Content Block") {
     html_code = template.replace("%%Content_Block%%", html_code);
   }
-  fsmemfs.writeFileSync(pathFile, html_code);
-  const result = await s3Uploadv2(pathFile, basename);
+  //   fsmemfs.writeFileSync(pathFile, html_code);
+  //   const result = await s3Uploadv2(pathFile, basename);
+
+  const result = await saveLocalHtml(html_code, basename);
+
+  console.log(result);
 
   res.status(201).json({
     status: "success",
@@ -380,6 +388,12 @@ app.get("/views/:filename", (req, res) => {
   res.sendFile(path.join(__dirname + `/views/${filename}`));
 });
 
+app.get("/views/html/:filename", (req, res) => {
+  const filename = req.params.filename;
+  console.log(filename);
+  res.sendFile(path.join(__dirname + `/views/html/${filename}`));
+});
+
 app.get("/views/images/:filename", (req, res) => {
   const filename = req.params.filename;
   console.log(filename);
@@ -394,8 +408,15 @@ app.get("/views/profilImages/:filename", (req, res) => {
 
 // CREATE a Screenshot
 app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
+  let baseURL = process.env.DEVELOPMENT_BASE_URL; // Default to development base URL http://localhost:3001
+
+  if (process.env.NODE_ENV === "production") {
+    baseURL = process.env.PRODUCTION_BASE_URL; // Use production base URL in the production environment
+  }
+
   const id = req.params.id;
-  const url = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/html_${id}.html`;
+  //   const url = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/html_${id}.html`;
+  const url = `${baseURL}/views/html/html_${id}.html`;
 
   const d = new Date();
   const mm = d.getMonth() + 1;
@@ -409,21 +430,13 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
     defaultViewport: null,
   });
 
-  // const browser = await puppeteer.connect({
-  //     browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`
-  // })
-
   const page = await browser.newPage();
-  // await page.setViewport({
-  //     width:700,
-  //     height:1000
-  // })
   await page.goto(url);
   // const pageHeight = await page.evaluate(() => { window.innerHeight; })
   // const pathFile = path.join(__dirname + `/views/images/screenshot${id}.png`)
   // const basename = path.basename(__dirname + `/views/images/screenshot${id}.png`)
   const basename = `screenshot_${id + "_" + timestamp}.png`;
-  const image = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/images/screenshot_${
+  const image = `${baseURL}/views/images/screenshot_${
     id + "_" + timestamp
   }.png`;
   // const screenshot = await page.screenshot({fullPage: true});
@@ -437,11 +450,13 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
       height: bounding_box.height,
     },
   });
+  console.log(screenshot);
   const { rows } = await db.query(
     "UPDATE email_table SET image = $1 WHERE id = $2 returning *",
     [image, id]
   );
-  await s3Uploadv2Screenshot(screenshot, basename);
+  //   await s3Uploadv2Screenshot(screenshot, basename);
+  await saveLocalScreenshot(screenshot, basename);
   res.status(201).json({
     status: "success",
     rows,
