@@ -4,28 +4,33 @@ const morgan = require("morgan");
 const express = require("express");
 const cors = require("cors");
 const puppeteer = require("puppeteer");
-const puppeteerCore = require("puppeteer-core")
-const path = require('path')
-const { fs:fsmemfs } = require('memfs')
-const { s3Uploadv2, s3Uploadv2Screenshot, s3Uploadv2Database, s3Uploadv2Picture, s3Delete, s3DeletePhoto, s3Find } = require("./s3Service");
-const cron = require('node-cron')
-const fs = require('fs');
+const puppeteerCore = require("puppeteer-core");
+const path = require("path");
+const { fs: fsmemfs } = require("memfs");
+const {
+  s3Uploadv2,
+  s3Uploadv2Screenshot,
+  s3Uploadv2Database,
+  s3Uploadv2Picture,
+  s3Delete,
+  s3DeletePhoto,
+  s3Find,
+} = require("./s3Service");
+const cron = require("node-cron");
+const fs = require("fs");
 const { template } = require("./template");
-const axios = require("axios")
+const axios = require("axios");
 const jwtAuth = require("./routes/jwtAuth");
-
-
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
-app.use(cors())
+app.use(cors());
 
+app.use(morgan("dev"));
 
-app.use(morgan("dev"))
-
-app.use("/api/v1" , jwtAuth )
+app.use("/api/v1", jwtAuth);
 
 // GET ALL Projects
 // app.get("/api/v1/projects", async (req, res) => {
@@ -40,235 +45,264 @@ app.use("/api/v1" , jwtAuth )
 
 // GET all Projects with page and limit
 app.get("/api/v1/projects", async (req, res) => {
+  const category = req.query.category;
+  const page = req.query.page;
+  const limit = req.query.limit;
+  const contentblock = req.query.contentBlock;
+  const query = req.query.query;
+  const type = req.query.type;
 
-    const category = req.query.category
-    const page = req.query.page
-    const limit = req.query.limit
-    const contentblock = req.query.contentBlock
-    const query = req.query.query
-    const type = req.query.type 
+  let SelectQuery = "SELECT * FROM email_table WHERE";
+  let dataQuery;
 
-    let SelectQuery = 'SELECT * FROM email_table WHERE'
-    let dataQuery
+  // Inital values
+  const initalFilter = [{ category, contentblock, type }];
 
-    // Inital values
-    const initalFilter = [{ category, contentblock, type}]
+  // Checks if inital values are undefined , null or ''
+  const fullQuery = Object.entries(initalFilter[0])
+    .filter((data) => data[1] !== undefined)
+    .filter((data) => data[1] !== "");
 
-    // Checks if inital values are undefined , null or ''
-    const fullQuery = Object.entries(initalFilter[0]).filter(data => (data[1] !== undefined )).filter(data => (data[1] !== '' ))
+  // Creating Dynamic SQL query
+  if (fullQuery.length > 0) {
+    dataQuery = fullQuery.map((data) => data[1]);
+    // console.log(dataQuery)
+    fullQuery.forEach((data, index) => {
+      SelectQuery += ` ${data[0]} = $${index + 1} ${
+        index + 1 !== fullQuery.length ? "AND" : ""
+      }`;
+    });
+    SelectQuery += "ORDER BY id DESC;";
+  }
 
-     // Creating Dynamic SQL query
-    if(fullQuery.length > 0) {
-        dataQuery = fullQuery.map(data => data[1])
-        // console.log(dataQuery)
-        fullQuery.forEach((data, index )=> {
-            SelectQuery += ` ${data[0]} = $${index + 1} ${index + 1 !== fullQuery.length ? 'AND' : ''}`
-        })
-        SelectQuery += 'ORDER BY id DESC;'
+  // console.log(fullQuery)
+
+  // console.log(fullQuery)
+
+  const { rows } =
+    query && type
+      ? await db.query(
+          "SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) AND type = $2 ORDER BY id DESC;",
+          ["%" + query + "%", type]
+        )
+      : query
+      ? await db.query(
+          "SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;",
+          ["%" + query + "%"]
+        )
+      : fullQuery.length > 0
+      ? await db.query(SelectQuery, dataQuery)
+      : await db.query("SELECT * FROM email_table ORDER BY id DESC;");
+
+  const count = await db.query(
+    "SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM   email_table GROUP  BY category UNION SELECT type, COUNT(*) AS Count FROM   email_table GROUP  BY type UNION SELECT 'All', COUNT(*) AS Count FROM   email_table) AS a ORDER BY a.category ASC;"
+  );
+
+  let countType;
+  if (type) {
+    countType = await db.query(
+      "SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM email_table WHERE type = 'Email' GROUP BY category UNION SELECT 'All', COUNT(*) AS Count FROM email_table WHERE type = 'Email') AS a ORDER BY a.category ASC;"
+    );
+  }
+
+  let countContentBlocks;
+  let queryCount =
+    "SELECT * FROM ( SELECT contentblock AS category, COUNT(*) AS Count FROM email_table WHERE";
+  if (type === "Content Block") {
+    if (fullQuery.length > 0) {
+      const filterQuery = fullQuery.filter(
+        (data) => data[0] !== "contentblock"
+      );
+      dataQuery = filterQuery.map((data) => data[1]);
+      // console.log(dataQuery)
+      filterQuery.forEach((data, index) => {
+        queryCount += ` ${data[0]} = $${index + 1} ${
+          index + 1 !== filterQuery.length ? "AND" : "GROUP BY contentblock"
+        }`;
+      });
+      queryCount +=
+        " UNION SELECT 'All', COUNT(*) AS Count FROM email_table WHERE";
+      filterQuery.forEach((data, index) => {
+        queryCount += ` ${data[0]} = $${index + 1} ${
+          index + 1 !== filterQuery.length ? "AND" : ""
+        }`;
+      });
+      queryCount += ") AS a ORDER BY a.category ASC;";
     }
+    countContentBlocks = await db.query(queryCount, dataQuery);
+  }
 
-    // console.log(fullQuery)
+  let hasMore = false;
+  let results = rows;
 
-    // console.log(fullQuery)
+  if (page && limit) {
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
 
-     const { rows } = query && type ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) AND type = $2 ORDER BY id DESC;", ['%' +query + '%', type]) :
-     query ? await db.query("SELECT * FROM email_table WHERE LOWER(name) LIKE LOWER($1) ORDER BY id DESC;", ['%' +query + '%'])
-     : fullQuery.length > 0 ? await db.query(SelectQuery, dataQuery)
-     : await db.query("SELECT * FROM email_table ORDER BY id DESC;")  
+    hasMore = endIndex < rows.length;
+    results = rows.slice(startIndex, endIndex);
+  }
 
-    const count = await 
-        db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM   email_table GROUP  BY category UNION SELECT type, COUNT(*) AS Count FROM   email_table GROUP  BY type UNION SELECT 'All', COUNT(*) AS Count FROM   email_table) AS a ORDER BY a.category ASC;")
-
-    let countType
-    if(type) {
-        countType = await db.query("SELECT * FROM ( SELECT category, COUNT(*) AS Count FROM email_table WHERE type = 'Email' GROUP BY category UNION SELECT 'All', COUNT(*) AS Count FROM email_table WHERE type = 'Email') AS a ORDER BY a.category ASC;")
-    }
-
-
-    let countContentBlocks
-    let queryCount = "SELECT * FROM ( SELECT contentblock AS category, COUNT(*) AS Count FROM email_table WHERE"
-    if(type === 'Content Block') {
-        if(fullQuery.length > 0) {
-            const filterQuery = fullQuery.filter((data) => data[0] !== 'contentblock')
-            dataQuery = filterQuery.map(data => data[1])
-            // console.log(dataQuery)
-            filterQuery.forEach((data, index )=> {
-                queryCount += ` ${data[0]} = $${index + 1} ${index + 1 !== filterQuery.length ? 'AND' : 'GROUP BY contentblock'}`
-            })
-            queryCount += " UNION SELECT 'All', COUNT(*) AS Count FROM email_table WHERE"
-            filterQuery.forEach((data, index) => {
-                queryCount += ` ${data[0]} = $${index + 1} ${index + 1 !== filterQuery.length ? 'AND' : ''}`
-            })
-            queryCount += ') AS a ORDER BY a.category ASC;'
-        }
-        countContentBlocks = await db.query(queryCount, dataQuery)
-       
-    }
-
-    let hasMore = false
-    let results = rows
-
-
-    if(page && limit) {
-        const startIndex = (page - 1) * limit
-        const endIndex  = page * limit
-        
-        hasMore = endIndex < rows.length
-        results = rows.slice(startIndex, endIndex)
-    }
-    
-
-    res.status(200).json({
-        status: "success",
-        length: results.length,
-        hasMore,
-        rows: results,
-        count: count.rows,
-        countType: countType && countType.rows,
-        countContentBlocks: countContentBlocks && countContentBlocks.rows
-    })
-})
-
+  res.status(200).json({
+    status: "success",
+    length: results.length,
+    hasMore,
+    rows: results,
+    count: count.rows,
+    countType: countType && countType.rows,
+    countContentBlocks: countContentBlocks && countContentBlocks.rows,
+  });
+});
 
 // POST Send Email
 app.post("/api/v1/projects/sendEmail", async (req, res) => {
+  const { image, user_id, email_name } = req.body;
 
-    const {image, user_id, email_name} = req.body;
+  const { rows } = await db.query("SELECT * FROM users;");
 
-    const { rows } = await db.query("SELECT * FROM users;")  
+  const userInfo = await db.query("SELECT * FROM users where id = $1", [
+    user_id,
+  ]);
 
-    const userInfo = await db.query("SELECT * FROM users where id = $1", [user_id])
+  const count = await db.query(
+    "SELECT sum(case when type = 'Email' then 1 else 0 end) as email_count, sum(case when type = 'Content Block' then 1 else 0 end) as code_count FROM email_table;"
+  );
 
-    const count = await db.query("SELECT sum(case when type = 'Email' then 1 else 0 end) as email_count, sum(case when type = 'Content Block' then 1 else 0 end) as code_count FROM email_table;")
+  const { email_count, code_count } = count.rows[0];
 
-    const {email_count, code_count} = count.rows[0]
+  const { user_name } = userInfo.rows[0];
 
-    const {user_name} = userInfo.rows[0]
+  const users = rows.map((data) => ({
+    contactKey: data.id + "_" + data.user_email,
+    to: data.user_email,
+    attributes: {
+      SubscriberKey: data.id + "_" + data.user_email,
+      EmailAddress: data.user_email,
+      image: image,
+      user_name: user_name,
+      email_name: email_name,
+      email_count: email_count,
+      code_count: code_count,
+    },
+  }));
 
-    const users = rows.map(data => 
-        (
-            {
-            contactKey: data.id + "_" + data.user_email,
-            to: data.user_email,
-            attributes: {
-              SubscriberKey: data.id + "_" + data.user_email,
-              EmailAddress: data.user_email,
-              image: image,
-              user_name: user_name,
-              email_name: email_name,
-              email_count: email_count,
-              code_count: code_count
-            }
-            }
-        )
-    )        
-
-    const token = await axios.post("https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token", {
-        grant_type: "client_credentials",
-        client_id: process.env.client_id,
-        client_secret: process.env.client_secret,
-        account_id: process.env.account_id
-      }, {
-        headers: {
-          "content-type": "application/json"
-        }
-    })
-
-    await axios.post("https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.rest.marketingcloudapis.com/messaging/v1/email/messages/", {
-            
-        definitionKey: "AddProject_Trigger",
-        recipients: users,
-        attributes: {
-        }
-      
-  }, {
-    headers: {
-    "Authorization": `Bearer ${token.data.access_token}`,
-      "content-type": "application/json"
+  const token = await axios.post(
+    "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token",
+    {
+      grant_type: "client_credentials",
+      client_id: process.env.client_id,
+      client_secret: process.env.client_secret,
+      account_id: process.env.account_id,
+    },
+    {
+      headers: {
+        "content-type": "application/json",
+      },
     }
-})
+  );
 
-    res.status(200).json({
-        status: "success",
-    })
-})
+  await axios.post(
+    "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.rest.marketingcloudapis.com/messaging/v1/email/messages/",
+    {
+      definitionKey: "AddProject_Trigger",
+      recipients: users,
+      attributes: {},
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token.data.access_token}`,
+        "content-type": "application/json",
+      },
+    }
+  );
+
+  res.status(200).json({
+    status: "success",
+  });
+});
 
 // GET idividual project
 app.get("/api/v1/projects/:id", async (req, res) => {
+  const id = req.params.id;
+  let updater_user;
 
-    const id = req.params.id
-    let updater_user
-    
-    try {
-    const projects = await db.query("SELECT * FROM email_table WHERE id = $1;", [id])
-    const user = await db.query("SELECT * FROM users where id = $1;", [projects.rows[0].user_id])
-    if(projects.rows[0].update_id !== null) {
-        updater_user = await db.query("SELECT * FROM users where id = $1", [projects.rows[0].update_id])
+  try {
+    const projects = await db.query(
+      "SELECT * FROM email_table WHERE id = $1;",
+      [id]
+    );
+    const user = await db.query("SELECT * FROM users where id = $1;", [
+      projects.rows[0].user_id,
+    ]);
+    if (projects.rows[0].update_id !== null) {
+      updater_user = await db.query("SELECT * FROM users where id = $1", [
+        projects.rows[0].update_id,
+      ]);
     }
 
-    const nowDate = new Date()
-    const updatedDate = new Date(projects.rows[0].updated_at)
-    const diffTime = Math.ceil(Math.abs(nowDate - updatedDate) / 1000)
+    const nowDate = new Date();
+    const updatedDate = new Date(projects.rows[0].updated_at);
+    const diffTime = Math.ceil(Math.abs(nowDate - updatedDate) / 1000);
 
-    if(diffTime > 15) {
-        const count = Number(projects.rows[0].count) + 1
-        console.log("View Count = " + count)
-        const updatedCount = await db.query("UPDATE email_table SET count = $1  WHERE id = $2 returning *", [count, id])
+    if (diffTime > 15) {
+      const count = Number(projects.rows[0].count) + 1;
+      console.log("View Count = " + count);
+      const updatedCount = await db.query(
+        "UPDATE email_table SET count = $1  WHERE id = $2 returning *",
+        [count, id]
+      );
 
-        res.status(200).json({
-            status: "success",
-            rows: updatedCount.rows[0],
-            user: user.rows[0],
-            updated_user: updater_user?.rows[0] || false
-        })
+      res.status(200).json({
+        status: "success",
+        rows: updatedCount.rows[0],
+        user: user.rows[0],
+        updated_user: updater_user?.rows[0] || false,
+      });
     } else {
-        res.status(200).json({
-            status: "success",
-            rows: projects.rows[0],
-            user: user.rows[0],
-            updated_user: updater_user?.rows[0] || false
-        }) 
+      res.status(200).json({
+        status: "success",
+        rows: projects.rows[0],
+        user: user.rows[0],
+        updated_user: updater_user?.rows[0] || false,
+      });
     }
-    
-    
-} catch (err) {
-    console.log(err)
-}
-})
-
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 // CREATE a Project
 app.post("/api/v1/projects", async (req, res) => {
-    const { name, category, type, contentblock, user_id } = req.body
+  const { name, category, type, contentblock, user_id } = req.body;
 
-    
-    let {html_code} = req.body
-    if(![name, category, html_code, type].every(Boolean)) {
-        return res.status(401).json("Please put all the details!");
-    }
+  let { html_code } = req.body;
+  if (![name, category, html_code, type].every(Boolean)) {
+    return res.status(401).json("Please put all the details!");
+  }
 
-    if(type === 'Content Block' && Boolean(contentblock) === false) {
-        return res.status(401).json("Please select Library!");
-    }
+  if (type === "Content Block" && Boolean(contentblock) === false) {
+    return res.status(401).json("Please select Library!");
+  }
 
+  const { rows } = await db.query(
+    "INSERT INTO email_table (name, html_code, category, type, contentblock, user_id) VALUES ($1 , $2, $3, $4, $5, $6) returning * ",
+    [name, html_code, category, type, contentblock, user_id]
+  );
+  const pathFile = `/html_${rows[0].id}.html`;
+  const basename = `html_${rows[0].id}.html`;
 
+  if (type === "Content Block") {
+    html_code = template.replace("%%Content_Block%%", html_code);
+  }
+  fsmemfs.writeFileSync(pathFile, html_code);
+  const result = await s3Uploadv2(pathFile, basename);
 
-    const { rows } = await db.query("INSERT INTO email_table (name, html_code, category, type, contentblock, user_id) VALUES ($1 , $2, $3, $4, $5, $6) returning * ", [name, html_code, category, type, contentblock, user_id]);
-    const pathFile = `/html_${rows[0].id}.html`
-    const basename = `html_${rows[0].id}.html`
-
-    if (type === "Content Block") {
-        html_code = template.replace("%%Content_Block%%", html_code)
-    }
-    fsmemfs.writeFileSync(pathFile, html_code)
-    const result = await s3Uploadv2(pathFile ,basename)
-
-    res.status(201).json({
-        status: "success",
-        result,
-        rows
-    })
-})
+  res.status(201).json({
+    status: "success",
+    result,
+    rows,
+  });
+});
 // const basename = path.basename(__dirname + '/views/images/screenshot13.png')
 // console.log(basename.split(".").pop())
 // const filename = path.join(__dirname + '/views/images/screenshot13.png')
@@ -279,130 +313,143 @@ app.post("/api/v1/projects", async (req, res) => {
 
 // UPDATE a Project
 app.put("/api/v1/projects/:id", async (req, res) => {
+  const photoName = req.params.id;
+  const id = photoName.split("_")[1];
+  const { type, user_id } = req.body;
+  let { html_code } = req.body;
 
-    const photoName = req.params.id;
-    const id = photoName.split("_")[1]
-    const { type, user_id } = req.body
-    let { html_code } = req.body
+  await s3DeletePhoto(photoName);
+  const { rows } = await db.query(
+    "UPDATE email_table SET html_code = $1 , update_code = $2, update_id = $3 WHERE id = $4 returning *",
+    [html_code, new Date(), user_id, id]
+  );
 
-    await s3DeletePhoto(photoName)
-    const {rows} = await db.query("UPDATE email_table SET html_code = $1 , update_code = $2, update_id = $3 WHERE id = $4 returning *", [html_code, new Date(), user_id, id])
+  const pathFile = `/html_${id}.html`;
+  const basename = `html_${id}.html`;
 
-    const pathFile = `/html_${id}.html`
-    const basename = `html_${id}.html`
+  if (type === "Content Block") {
+    html_code = template.replace("%%Content_Block%%", html_code);
+  }
+  fsmemfs.writeFileSync(pathFile, html_code);
+  const result = await s3Uploadv2(pathFile, basename);
 
-    if (type === "Content Block") {
-        html_code = template.replace("%%Content_Block%%", html_code)
-    }
-    fsmemfs.writeFileSync(pathFile, html_code)
-    const result = await s3Uploadv2(pathFile ,basename)
-
-    res.status(200).json({
-        status: "success",
-        rows,
-        result
-    })
-})
+  res.status(200).json({
+    status: "success",
+    rows,
+    result,
+  });
+});
 
 // DELETE a Project
 app.delete("/api/v1/projects/:id", async (req, res) => {
-    const photoName = req.params.id;
-    const id = photoName.split("_")[1]
+  const photoName = req.params.id;
+  const id = photoName.split("_")[1];
 
-    try {
-         const results = await s3Delete(id, photoName)
-         await db.query("DELETE FROM email_table WHERE id = $1", [id]);
-         res.status(200).json({
-            status: `Email Template deleted with ID: ${id}`,
-            results
-        })
-    } catch (error) {
-        console.log(error)
-    }
-})
+  try {
+    const results = await s3Delete(id, photoName);
+    await db.query("DELETE FROM email_table WHERE id = $1", [id]);
+    res.status(200).json({
+      status: `Email Template deleted with ID: ${id}`,
+      results,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 // Test Project
 app.get("/api/v1/test/", async (req, res) => {
-    // const id = req.params.id;
-    // console.log(req.params)
+  // const id = req.params.id;
+  // console.log(req.params)
 
-    try {
-        const results = await s3Find('views/images/screenshot')
-        console.log(results)
-         res.status(200).json({
-            status: `Success`,
-            results
-        })
-    } catch (error) {
-        console.log(error)
-    }
-})
+  try {
+    const results = await s3Find("views/images/screenshot");
+    console.log(results);
+    res.status(200).json({
+      status: `Success`,
+      results,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
+app.get("/views/:filename", (req, res) => {
+  const filename = req.params.filename;
+  console.log(filename);
+  res.sendFile(path.join(__dirname + `/views/${filename}`));
+});
 
-app.get('/views/:filename', (req, res) => {
-    const filename= req.params.filename
-    console.log(filename)
-     res.sendFile(path.join(__dirname + `/views/${filename}`))
-})
+app.get("/views/images/:filename", (req, res) => {
+  const filename = req.params.filename;
+  console.log(filename);
+  res.sendFile(path.join(__dirname + `/views/images/${filename}`));
+});
 
-app.get('/views/images/:filename', (req, res) => {
-    const filename= req.params.filename
-    console.log(filename)
-     res.sendFile(path.join(__dirname + `/views/images/${filename}`))
-})
+app.get("/views/profilImages/:filename", (req, res) => {
+  const filename = req.params.filename;
+  console.log(filename);
+  res.sendFile(path.join(__dirname + `/views/profilImages/${filename}`));
+});
 
 // CREATE a Screenshot
-app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
-    const id = req.params.id;
-    const url = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/html_${id}.html`
+app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
+  const id = req.params.id;
+  const url = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/html_${id}.html`;
 
-    const d = new Date();
-    const mm = d.getMonth() + 1;
-    const dd = d.getDate();
-    const yy = d.getFullYear();
-    const min = d.getMinutes();
-    const sec = d.getSeconds();
-    const timestamp = "" + yy + mm + dd + min + sec
+  const d = new Date();
+  const mm = d.getMonth() + 1;
+  const dd = d.getDate();
+  const yy = d.getFullYear();
+  const min = d.getMinutes();
+  const sec = d.getSeconds();
+  const timestamp = "" + yy + mm + dd + min + sec;
 
-    const browser = await puppeteer.launch({
-        defaultViewport: null,
-    });
+  const browser = await puppeteer.launch({
+    defaultViewport: null,
+  });
 
-    // const browser = await puppeteer.connect({
-    //     browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`
-    // })
+  // const browser = await puppeteer.connect({
+  //     browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`
+  // })
 
+  const page = await browser.newPage();
+  // await page.setViewport({
+  //     width:700,
+  //     height:1000
+  // })
+  await page.goto(url);
+  // const pageHeight = await page.evaluate(() => { window.innerHeight; })
+  // const pathFile = path.join(__dirname + `/views/images/screenshot${id}.png`)
+  // const basename = path.basename(__dirname + `/views/images/screenshot${id}.png`)
+  const basename = `screenshot_${id + "_" + timestamp}.png`;
+  const image = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/images/screenshot_${
+    id + "_" + timestamp
+  }.png`;
+  // const screenshot = await page.screenshot({fullPage: true});
+  const body = await page.$("body");
+  const bounding_box = await body.boundingBox();
+  const screenshot = await page.screenshot({
+    clip: {
+      x: bounding_box.x,
+      y: bounding_box.y,
+      width: bounding_box.width,
+      height: bounding_box.height,
+    },
+  });
+  const { rows } = await db.query(
+    "UPDATE email_table SET image = $1 WHERE id = $2 returning *",
+    [image, id]
+  );
+  await s3Uploadv2Screenshot(screenshot, basename);
+  res.status(201).json({
+    status: "success",
+    rows,
+    image,
+  });
+});
 
-    const page = await browser.newPage();
-    // await page.setViewport({
-    //     width:700,
-    //     height:1000
-    // })
-    await page.goto(url);
-    // const pageHeight = await page.evaluate(() => { window.innerHeight; })
-    // const pathFile = path.join(__dirname + `/views/images/screenshot${id}.png`)
-    // const basename = path.basename(__dirname + `/views/images/screenshot${id}.png`)
-    const basename = `screenshot_${id + '_' + timestamp}.png`
-    const image = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/images/screenshot_${id + '_' + timestamp}.png`
-    // const screenshot = await page.screenshot({fullPage: true});
-    const body = await page.$('body');
-    const bounding_box = await body.boundingBox();
-    const screenshot = await page.screenshot({clip: {
-        x: bounding_box.x,
-        y: bounding_box.y,
-        width: bounding_box.width,
-        height: bounding_box.height 
-    }});
-    const {rows} =  await db.query("UPDATE email_table SET image = $1 WHERE id = $2 returning *", [ image, id])
-    await s3Uploadv2Screenshot(screenshot ,basename)
-    res.status(201).json({
-        status: "success",
-        rows,
-        image
-    })
-})
-
-//Create ProfileImage 
+//Create ProfileImage
 
 // app.post('/api/v1/project/test', async (req, res) => {
 //     const image = req.body.image
@@ -426,7 +473,7 @@ app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
 
 //         s3Uploadv2Database(data , `email_data_${today}.csv`)
 //         console.log('Data have been uploaded!')
-        
+
 //     })
 // }
 
@@ -441,11 +488,11 @@ app.get('/api/v1/projects/screenshot/:id', async (req, res) => {
 
 //         s3Uploadv2Database(data , `email_data_${today}.csv`)
 //         console.log('Data have been uploaded!')
-        
+
 //     })
 // })
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
-    console.log(`Server is up and listening on port ${port}`);
+  console.log(`Server is up and listening on port ${port}`);
 });
