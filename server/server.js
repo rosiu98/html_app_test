@@ -18,6 +18,24 @@ const fs = require("fs");
 const { template } = require("./template");
 const axios = require("axios");
 const jwtAuth = require("./routes/jwtAuth");
+const sharp = require("sharp");
+
+const pathName = process.env.NODE_ENV === "production" ? "/mnt" : __dirname;
+
+const imagesFolderPath = path.join(pathName, "views", "images");
+const htmlFolderPath = path.join(pathName, "views", "html");
+const profilImagesFolderPath = path.join(pathName, "views", "profilImages");
+
+// Create folders only in production
+if (process.env.NODE_ENV === "production") {
+  [imagesFolderPath, htmlFolderPath, profilImagesFolderPath].forEach(
+    (folderPath) => {
+      if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath, { recursive: true });
+      }
+    }
+  );
+}
 
 const app = express();
 
@@ -356,17 +374,17 @@ app.delete("/api/v1/projects/:id", async (req, res) => {
 
 app.get("/views/html/:filename", (req, res) => {
   const filename = req.params.filename;
-  res.sendFile(path.join(__dirname + `/views/html/${filename}`));
+  res.sendFile(path.join(pathName + `/views/html/${filename}`));
 });
 
 app.get("/views/images/:filename", (req, res) => {
   const filename = req.params.filename;
-  res.sendFile(path.join(__dirname + `/views/images/${filename}`));
+  res.sendFile(path.join(pathName + `/views/images/${filename}`));
 });
 
 app.get("/views/profilImages/:filename", (req, res) => {
   const filename = req.params.filename;
-  res.sendFile(path.join(__dirname + `/views/profilImages/${filename}`));
+  res.sendFile(path.join(pathName + `/views/profilImages/${filename}`));
 });
 
 // CREATE a Screenshot
@@ -398,10 +416,10 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
   // const pageHeight = await page.evaluate(() => { window.innerHeight; })
   // const pathFile = path.join(__dirname + `/views/images/screenshot${id}.png`)
   // const basename = path.basename(__dirname + `/views/images/screenshot${id}.png`)
-  const basename = `screenshot_${id + "_" + timestamp}.png`;
+  const basename = `screenshot_${id + "_" + timestamp}.jpeg`;
   const image = `${baseURL}/views/images/screenshot_${
     id + "_" + timestamp
-  }.png`;
+  }.jpeg`;
   // const screenshot = await page.screenshot({fullPage: true});
   const body = await page.$("body");
   const bounding_box = await body.boundingBox();
@@ -413,12 +431,35 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
       height: bounding_box.height,
     },
   });
+
+  let compressedScreenshot;
+
+  const screenshotSizeInKB = Buffer.from(screenshot).length / 1024; // Convert to kilobytes
+
+  if (screenshotSizeInKB > 50) {
+    // Apply compression only if the size is greater than 50KB
+    compressedScreenshot = await sharp(screenshot)
+      .resize(230, 500, {
+        fit: "inside",
+      })
+      .jpeg({
+        quality: 80,
+        chromaSubsampling: "4:4:4",
+        progressive: true,
+        overshootDeringing: true,
+      })
+      .toBuffer();
+  } else {
+    // Use the original screenshot if it's smaller than or equal to 50KB
+    compressedScreenshot = screenshot;
+  }
+
   const { rows } = await db.query(
     "UPDATE email_table SET image = $1 WHERE id = $2 returning *",
     [image, id]
   );
   //   await s3Uploadv2Screenshot(screenshot, basename);
-  await saveLocalScreenshot(screenshot, basename);
+  await saveLocalScreenshot(compressedScreenshot, basename);
   res.status(201).json({
     status: "success",
     rows,
@@ -471,5 +512,7 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
-  console.log(`Server is up and listening on port ${port}`);
+  console.log(
+    `Server is up and listening on port ${port} and is in ${process.env.NODE_ENV} mode`
+  );
 });

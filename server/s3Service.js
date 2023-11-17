@@ -1,9 +1,16 @@
 const fileSystem = require("fs");
 const path = require("path");
 
+const pathName = process.env.NODE_ENV === "production" ? "/mnt" : __dirname;
+
 exports.saveLocalPicture = async (file, basename) => {
   const filter = file.mimetype.split("/").pop();
-  const filePath = `views/profilImages/${basename}.${filter}`;
+  const filePath = path.join(
+    pathName,
+    "views",
+    "profilImages",
+    `${basename}.${filter}`
+  );
 
   let baseURL = process.env.DEVELOPMENT_BASE_URL; // Default to development base URL http://localhost:3001
 
@@ -23,7 +30,7 @@ exports.saveLocalPicture = async (file, basename) => {
 };
 
 exports.saveLocalHtml = async (htmlCode, basename) => {
-  const filePath = `views/html/${basename}`; // Specify the file path
+  const filePath = path.join(pathName, "views", "html", basename); // Specify the file path
 
   let baseURL = process.env.DEVELOPMENT_BASE_URL; // Default to development base URL http://localhost:3001
 
@@ -44,7 +51,7 @@ exports.saveLocalHtml = async (htmlCode, basename) => {
 };
 
 exports.saveLocalScreenshot = async (file, basename) => {
-  const filePath = `views/images/${basename}`;
+  const filePath = path.join(pathName, "views", "images", basename);
 
   let baseURL = process.env.DEVELOPMENT_BASE_URL; // Default to development base URL http://localhost:3001
 
@@ -69,11 +76,12 @@ exports.deleteLocalFiles = (id, photoName) => {
 
   // Define the file paths for the local files
   const screenshotFilePath = path.join(
-    __dirname,
-    "views/images",
+    pathName,
+    "views",
+    "images",
     screenshotFileName
   );
-  const htmlFilePath = path.join(__dirname, "views/html", htmlFileName);
+  const htmlFilePath = path.join(pathName, "views", "html", htmlFileName);
 
   try {
     // Delete the local files
@@ -93,8 +101,9 @@ exports.deleteLocalScreenshot = (photoName) => {
 
   // Define the file paths for the local files
   const screenshotFilePath = path.join(
-    __dirname,
-    "views/images",
+    pathName,
+    "views",
+    "images",
     screenshotFileName
   );
 
