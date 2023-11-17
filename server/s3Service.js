@@ -23,7 +23,9 @@ exports.saveLocalPicture = async (file, basename) => {
       if (err) {
         reject(err);
       } else {
-        resolve({ Location: `${baseURL}/${filePath}` });
+        const locationPath = path.relative(pathName, filePath); // Calculate relative path
+        const locationURL = `${baseURL}/${locationPath}`; // Construct the URL using relative path
+        resolve({ Location: `${locationURL}` });
       }
     });
   });
@@ -44,7 +46,9 @@ exports.saveLocalHtml = async (htmlCode, basename) => {
       if (err) {
         reject(err);
       } else {
-        resolve({ Location: `${baseURL}/${filePath}` });
+        const locationPath = path.relative(pathName, filePath); // Calculate relative path
+        const locationURL = `${baseURL}/${locationPath}`; // Construct the URL using relative path
+        resolve({ Location: `${locationURL}` });
       }
     });
   });
@@ -64,7 +68,9 @@ exports.saveLocalScreenshot = async (file, basename) => {
       if (err) {
         reject(err);
       } else {
-        resolve({ Location: `${baseURL}/${filePath}` });
+        const locationPath = path.relative(pathName, filePath); // Calculate relative path
+        const locationURL = `${baseURL}/${locationPath}`; // Construct the URL using relative path
+        resolve({ Location: `${locationURL}` });
       }
     });
   });
