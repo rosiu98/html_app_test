@@ -165,67 +165,67 @@ app.get("/api/v1/projects", async (req, res) => {
 
 // POST Send Email
 app.post("/api/v1/projects/sendEmail", async (req, res) => {
-  if (process.env.NODE_ENV === "production") {
-    const { image, user_id, email_name } = req.body;
+  // if (process.env.NODE_ENV === "production") {
+  const { image, user_id, email_name } = req.body;
 
-    const { rows } = await db.query("SELECT * FROM users;");
+  const { rows } = await db.query("SELECT * FROM users;");
 
-    const userInfo = await db.query("SELECT * FROM users where id = $1", [
-      user_id,
-    ]);
+  const userInfo = await db.query("SELECT * FROM users where id = $1", [
+    user_id,
+  ]);
 
-    const count = await db.query(
-      "SELECT sum(case when type = 'Email' then 1 else 0 end) as email_count, sum(case when type = 'Content Block' then 1 else 0 end) as code_count FROM email_table;"
-    );
+  const count = await db.query(
+    "SELECT sum(case when type = 'Email' then 1 else 0 end) as email_count, sum(case when type = 'Content Block' then 1 else 0 end) as code_count FROM email_table;"
+  );
 
-    const { email_count, code_count } = count.rows[0];
+  const { email_count, code_count } = count.rows[0];
 
-    const { user_name } = userInfo.rows[0];
+  const { user_name } = userInfo.rows[0];
 
-    const users = rows.map((data) => ({
-      contactKey: data.id + "_" + data.user_email,
-      to: data.user_email,
-      attributes: {
-        SubscriberKey: data.id + "_" + data.user_email,
-        EmailAddress: data.user_email,
-        image: image,
-        user_name: user_name,
-        email_name: email_name,
-        email_count: email_count,
-        code_count: code_count,
+  const users = rows.map((data) => ({
+    contactKey: data.id + "_" + data.user_email,
+    to: data.user_email,
+    attributes: {
+      SubscriberKey: data.id + "_" + data.user_email,
+      EmailAddress: data.user_email,
+      image: image,
+      user_name: user_name,
+      email_name: email_name,
+      email_count: email_count,
+      code_count: code_count,
+    },
+  }));
+
+  const token = await axios.post(
+    "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token",
+    {
+      grant_type: "client_credentials",
+      client_id: process.env.client_id,
+      client_secret: process.env.client_secret,
+      account_id: process.env.account_id,
+    },
+    {
+      headers: {
+        "content-type": "application/json",
       },
-    }));
+    }
+  );
 
-    const token = await axios.post(
-      "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.auth.marketingcloudapis.com/v2/Token",
-      {
-        grant_type: "client_credentials",
-        client_id: process.env.client_id,
-        client_secret: process.env.client_secret,
-        account_id: process.env.account_id,
+  await axios.post(
+    "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.rest.marketingcloudapis.com/messaging/v1/email/messages/",
+    {
+      definitionKey: "AddProject_Trigger",
+      recipients: users,
+      attributes: {},
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token.data.access_token}`,
+        "content-type": "application/json",
       },
-      {
-        headers: {
-          "content-type": "application/json",
-        },
-      }
-    );
-
-    await axios.post(
-      "https://mcjz3r7pm1pl-6z7sb0jcxy1k0y4.rest.marketingcloudapis.com/messaging/v1/email/messages/",
-      {
-        definitionKey: "AddProject_Trigger",
-        recipients: users,
-        attributes: {},
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token.data.access_token}`,
-          "content-type": "application/json",
-        },
-      }
-    );
-  }
+    }
+  );
+  // }
 
   res.status(200).json({
     status: "success",
@@ -396,7 +396,6 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
   }
 
   const id = req.params.id;
-  //   const url = `https://emailpaul-app.s3.eu-central-1.amazonaws.com/views/html_${id}.html`;
   const url = `${baseURL}/views/html/html_${id}.html`;
 
   const d = new Date();
@@ -436,10 +435,10 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
 
   const screenshotSizeInKB = Buffer.from(screenshot).length / 1024; // Convert to kilobytes
 
-  if (screenshotSizeInKB > 50) {
+  if (screenshotSizeInKB > 150) {
     // Apply compression only if the size is greater than 50KB
     compressedScreenshot = await sharp(screenshot)
-      .resize(230, 500, {
+      .resize(460, null, {
         fit: "inside",
       })
       .jpeg({
@@ -458,7 +457,6 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
     "UPDATE email_table SET image = $1 WHERE id = $2 returning *",
     [image, id]
   );
-  //   await s3Uploadv2Screenshot(screenshot, basename);
   await saveLocalScreenshot(compressedScreenshot, basename);
   res.status(201).json({
     status: "success",
