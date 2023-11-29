@@ -436,7 +436,7 @@ app.get("/api/v1/projects/screenshot/:id", async (req, res) => {
   const screenshotSizeInKB = Buffer.from(screenshot).length / 1024; // Convert to kilobytes
 
   if (screenshotSizeInKB > 150) {
-    // Apply compression only if the size is greater than 50KB
+    // Apply compression only if the size is greater than 150KB
     compressedScreenshot = await sharp(screenshot)
       .resize(460, null, {
         fit: "inside",

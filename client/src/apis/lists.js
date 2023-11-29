@@ -34,41 +34,48 @@ export const listOfContentBlocks = [
 ];
 
 export const listOfCategories = [
+  // {
+  //   value: "Cibc",
+  //   text: "Cibc",
+  //   icon: <img src="https://i.imgur.com/f8llVJY.png" width="16" alt="CIBC" />,
+  // },
+  // {
+  //   value: "MountainDew",
+  //   text: "MountainDew",
+  //   icon: (
+  //     <img src="https://i.imgur.com/ih7vLVS.png" width="16" alt="MountainDew" />
+  //   ),
+  // },
+  // {
+  //   value: "TastyRewards",
+  //   text: "TastyRewards",
+  //   icon: (
+  //     <img
+  //       src="https://image.em.pepsico.com/lib/fe4515707564067f771671/m/1/d3eb200f-9650-4104-a59b-3f9b4fd75591.png"
+  //       width="16"
+  //       alt="TastyRewards"
+  //     />
+  //   ),
+  // },
+  // {
+  //   value: "Gatorade",
+  //   text: "Gatorade",
+  //   icon: (
+  //     <img src="https://i.imgur.com/9l1cft1.png" width="16" alt="Gatorade" />
+  //   ),
+  // },
+  // {
+  //   value: "ShellEnergy",
+  //   text: "ShellEnergy",
+  //   icon: (
+  //     <img src="https://i.imgur.com/130DVZh.png" width="16" alt="ShellEnergy" />
+  //   ),
+  // },
   {
-    value: "Cibc",
-    text: "Cibc",
-    icon: <img src="https://i.imgur.com/f8llVJY.png" width="16" alt="CIBC" />,
-  },
-  {
-    value: "MountainDew",
-    text: "MountainDew",
+    value: "Meridian",
+    text: "Meridian",
     icon: (
-      <img src="https://i.imgur.com/ih7vLVS.png" width="16" alt="MountainDew" />
-    ),
-  },
-  {
-    value: "TastyRewards",
-    text: "TastyRewards",
-    icon: (
-      <img
-        src="https://image.em.pepsico.com/lib/fe4515707564067f771671/m/1/d3eb200f-9650-4104-a59b-3f9b4fd75591.png"
-        width="16"
-        alt="TastyRewards"
-      />
-    ),
-  },
-  {
-    value: "Gatorade",
-    text: "Gatorade",
-    icon: (
-      <img src="https://i.imgur.com/9l1cft1.png" width="16" alt="Gatorade" />
-    ),
-  },
-  {
-    value: "ShellEnergy",
-    text: "ShellEnergy",
-    icon: (
-      <img src="https://i.imgur.com/130DVZh.png" width="16" alt="ShellEnergy" />
+      <img src="https://i.imgur.com/0aW4mEh.png" width="16" alt="Meridian" />
     ),
   },
 ];
