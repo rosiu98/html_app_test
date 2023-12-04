@@ -14,6 +14,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { html as codeMirrorHtml } from "@codemirror/lang-html";
 import useEmailsDataStore from "../stores/emailsData";
+import templateMeridian from "../apis/templateMeridian";
 
 const EmailPage = () => {
   const { id } = useParams();
@@ -139,7 +140,14 @@ const EmailPage = () => {
 
   if (Object.keys(data).length > 0) {
     if (data?.type === "Content Block") {
-      html = template.replace("%%Content_Block%%", data.html_code);
+      if (data.category === "Meridian") {
+        // Load Meridian template
+        html = templateMeridian.replace("%%Content_Block%%", data.html_code);
+      } else {
+        // Load Default template
+        html = template.replace("%%Content_Block%%", data.html_code);
+      }
+
       html = html.replace(
         "<head>",
         '<head> <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.0/iframeResizer.contentWindow.min.js"></script>'
