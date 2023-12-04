@@ -265,7 +265,6 @@ const EmailListV2 = ({ data }) => {
           {emails?.map((data, index) => {
             // const image = data.image ? `${data.image}?${now}` : null
             const image = data.image;
-            console.log(data.name.length);
             if (emails.length === index + 1) {
               return (
                 <div
